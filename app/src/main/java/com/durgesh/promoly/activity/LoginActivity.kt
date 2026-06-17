@@ -1,6 +1,7 @@
 package com.durgesh.promoly.activity
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
@@ -24,7 +25,6 @@ class LoginActivity : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_login)
 
-            // Initialize Views
             loginUsername = findViewById(R.id.loginUsername)
             loginPassword = findViewById(R.id.loginPassword)
             loginBtn = findViewById(R.id.loginbtn)
@@ -36,8 +36,8 @@ class LoginActivity : AppCompatActivity() {
             // Login Button Click
             loginBtn.setOnClickListener {
 
-                val username = loginUsername.text.toString().trim()
-                val password = loginPassword.text.toString().trim()
+                val username = loginUsername.text.toString()
+                val password = loginPassword.text.toString()
 
                 if (username.isEmpty()) {
                     loginUsername.error = "Enter Username"
@@ -57,7 +57,6 @@ class LoginActivity : AppCompatActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
 
-                // TODO: Firebase Login Code Here
             }
 
             // Google Login
@@ -80,13 +79,7 @@ class LoginActivity : AppCompatActivity() {
 
             // Register
             textRegister.setOnClickListener {
-                Toast.makeText(
-                    this,
-                    "Open Register Screen",
-                    Toast.LENGTH_SHORT
-                ).show()
-
-                // startActivity(Intent(this, RegisterActivity::class.java))
+                startActivity(Intent(this, RegisterActivity::class.java))
             }
         }
     }

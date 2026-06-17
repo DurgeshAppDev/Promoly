@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/backgroundcolor"
+    tools:context=".activity.RegisterActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_30sdp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo" />
+
+            <TextView
+                android:id="@+id/tvAppName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_1sdp"
+                android:text="Promoly"
+                android:textColor="@color/blackR"
+                android:textSize="@dimen/_25ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvTagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:text="Connect. Collaborate. Grow."
+                android:textColor="@color/grey"
+                android:textSize="@dimen/_10ssp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/whitecardbackground"
+            android:layout_marginTop="@dimen/_15ssp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:padding="@dimen/_15sdp"
+            >
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Welcome Back"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:textSize="@dimen/_15ssp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textColor="@color/blackR"-->
+<!--                />-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Register to Continue"
+                android:textSize="@dimen/_10ssp"
+                android:textColor="@color/grey"
+                android:layout_gravity="center"
+                />
+            <TextView
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Name"
+                android:gravity="start"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:textColor="@color/blackR"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                />
+            <EditText
+                android:id="@+id/registerfullname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/whitecardbackground"
+                android:hint="Enter your full name"
+                android:textSize="@dimen/_12ssp"
+                android:drawableStart="@drawable/user"
+                android:drawablePadding="@dimen/_10sdp"
+                android:textColor="@color/grey"
+                android:padding="@dimen/_10sdp"
+                />
+
+            <TextView
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:gravity="start"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:textColor="@color/blackR"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                />
+            <EditText
+                android:id="@+id/registerEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/whitecardbackground"
+                android:hint="Enter your Email"
+                android:textSize="@dimen/_12ssp"
+                android:drawableStart="@drawable/lock"
+                android:drawablePadding="@dimen/_10sdp"
+                android:textColor="@color/grey"
+                android:padding="@dimen/_10sdp"
+                />
+
+            <TextView
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:gravity="start"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:textColor="@color/blackR"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                />
+            <EditText
+                android:id="@+id/registerPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/whitecardbackground"
+                android:hint="Enter your  Password"
+                android:textSize="@dimen/_12ssp"
+                android:drawableStart="@drawable/lock"
+                android:drawablePadding="@dimen/_10sdp"
+                android:textColor="@color/grey"
+                android:padding="@dimen/_10sdp"
+                />
+            <TextView
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Confirm Password"
+                android:gravity="start"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:textColor="@color/blackR"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                />
+            <EditText
+                android:id="@+id/registerConfirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/whitecardbackground"
+                android:hint="Enter your  Password"
+                android:textSize="@dimen/_12ssp"
+                android:drawableStart="@drawable/lock"
+                android:drawablePadding="@dimen/_10sdp"
+                android:textColor="@color/grey"
+                android:padding="@dimen/_10sdp"
+                />
+
+
+            <Button
+                android:id="@+id/registerbtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/buttonlayout"
+                android:text="Register"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:padding="@dimen/_5sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="@dimen/_30sdp"
+            android:layout_marginRight="@dimen/_30sdp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:padding="@dimen/_5sdp"
+                android:text="or continue with"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/_10ssp" />
+
+            <TextView
+                android:id="@+id/RegisterWithGoogle"
+                android:layout_width="@dimen/_200sdp"
+                android:layout_height="match_parent"
+                android:background="@drawable/whitecardbackground"
+                android:text="Register with Google"
+                android:textSize="@dimen/_12ssp"
+                android:drawableLeft="@drawable/google_logo"
+                android:drawablePadding="@dimen/_15ssp"
+                android:layout_gravity="center"
+                android:textColor="@color/grey"
+                android:padding="@dimen/_10sdp"
+                />
+
+            <TextView
+                android:id="@+id/registerWithFacebook"
+                android:layout_width="@dimen/_200sdp"
+                android:layout_height="match_parent"
+                android:background="@drawable/whitecardbackground"
+                android:text="Register with Facebook"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:textSize="@dimen/_12ssp"
+                android:drawableLeft="@drawable/facebook_logo"
+                android:drawablePadding="@dimen/_15ssp"
+                android:layout_gravity="center"
+                android:textColor="@color/grey"
+                android:padding="@dimen/_10sdp"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_gravity="center"
+            android:padding="@dimen/_10sdp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Already have account? "
+                android:textColor="@color/grey"
+                android:textSize="@dimen/_12ssp" />
+            <TextView
+                android:id="@+id/textLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/_13ssp"
+                android:layout_gravity="center"
+                android:text="Login"
+                android:textColor="@color/green"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
