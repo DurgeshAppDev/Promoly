@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/backgroundcolor"
+    tools:context=".activity.OtpActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/whitecardbackground"
+            android:layout_marginTop="@dimen/_15ssp"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:padding="@dimen/_15sdp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Request OTP"
+                android:layout_gravity="center"
+                android:textSize="@dimen/_15ssp"
+                android:textStyle="bold"
+                android:textColor="@color/blackR"
+                android:layout_marginBottom="@dimen/_10sdp"
+                />
+
+
+
+            <TextView
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:gravity="start"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:textColor="@color/blackR"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                />
+            <EditText
+                android:id="@+id/otpEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/whitecardbackground"
+                android:hint="Enter your  Email"
+                android:textSize="@dimen/_12ssp"
+                android:drawableStart="@drawable/email"
+                android:drawablePadding="@dimen/_10sdp"
+                android:textColor="@color/grey"
+                android:padding="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:singleLine="true"
+                />
+
+            <Button
+                android:id="@+id/changePasswordbtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/buttonlayout"
+                android:text="send Request"
+                android:padding="@dimen/_5sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                />
+
+            <TextView
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OTP"
+                android:gravity="start"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:textColor="@color/blackR"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                />
+            <EditText
+                android:id="@+id/opt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/whitecardbackground"
+                android:hint="Enter your  Email"
+                android:textSize="@dimen/_12ssp"
+                android:textColor="@color/grey"
+                android:gravity="center"
+                android:padding="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:singleLine="true"
+                />
+
+            <TextView
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:45 sec"
+                android:layout_gravity="end"
+                android:gravity="start"
+                android:textSize="@dimen/_12ssp"
+                android:drawableLeft="@drawable/timer"
+                android:drawablePadding="@dimen/_8sdp"
+                android:textStyle="bold"
+                android:textColor="@color/blackR"
+                android:layout_marginRight="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_15sdp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="2"
+                >
+
+                <Button
+                    android:id="@+id/verifyOtpbtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/buttonlayout"
+                    android:text="verify otp"
+                    android:padding="@dimen/_5sdp"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_15sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:singleLine="true"
+                    />
+
+                <Button
+                android:id="@+id/resendOtpbtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                android:background="@drawable/buttonlayout"
+                android:text="resend otp"
+                android:padding="@dimen/_5sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                />
+        </LinearLayout>
+        </LinearLayout>
+
+
+    </LinearLayout>
+</ScrollView>
