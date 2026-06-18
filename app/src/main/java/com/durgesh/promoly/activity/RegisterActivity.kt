@@ -8,8 +8,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.durgesh.promoly.R
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+
 
 class RegisterActivity : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
 
     private lateinit var fullName: EditText
     private lateinit var email: EditText
@@ -26,6 +31,7 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
+        auth = FirebaseAuth.getInstance()
 
         fullName = findViewById(R.id.registerfullname)
         email = findViewById(R.id.registerEmail)
@@ -38,83 +44,98 @@ class RegisterActivity : AppCompatActivity() {
         facebookRegister = findViewById(R.id.registerWithFacebook)
         textLogin = findViewById(R.id.textLogin)
 
-
         registerBtn.setOnClickListener {
 
-            val name = fullName.text.toString()
-            val emailText = email.text.toString()
-            val pass = password.text.toString()
-            val confirmPass = confirmPassword.text.toString()
+            val name = fullName.text.toString().trim()
+            val emailText = email.text.toString().trim()
+            val pass = password.text.toString().trim()
+            val confirmPass = confirmPassword.text.toString().trim()
 
-            when {
-                name.isEmpty() -> {
-                    fullName.error = "Enter Full Name"
-                    fullName.requestFocus()
-                }
-
-                emailText.isEmpty() -> {
-                    email.error = "Enter Email"
-                    email.requestFocus()
-                }
-
-                !android.util.Patterns.EMAIL_ADDRESS.matcher(emailText).matches() -> {
-                    email.error = "Enter Valid Email"
-                    email.requestFocus()
-                }
-
-                pass.isEmpty() -> {
-                    password.error = "Enter Password"
-                    password.requestFocus()
-                }
-
-                pass.length < 6 -> {
-                    password.error = "Password must be at least 6 characters"
-                    password.requestFocus()
-                }
-
-                confirmPass.isEmpty() -> {
-                    confirmPassword.error = "Confirm Password"
-                    confirmPassword.requestFocus()
-                }
-
-                pass != confirmPass -> {
-                    confirmPassword.error = "Passwords do not match"
-                    confirmPassword.requestFocus()
-                }
-
-                else -> {
-                    Toast.makeText(
-                        this,
-                        "Registration Successful",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            // Validation
+            if (name.isEmpty()) {
+                fullName.error = "Enter Full Name"
+                return@setOnClickListener
             }
+
+            if (emailText.isEmpty()) {
+                email.error = "Enter Email"
+                return@setOnClickListener
+            }
+
+            if (pass.isEmpty()) {
+                password.error = "Enter Password"
+                return@setOnClickListener
+            }
+
+            if (pass.length < 6) {
+                password.error = "Password must be at least 6 characters"
+                return@setOnClickListener
+            }
+
+            if (pass != confirmPass) {
+                confirmPassword.error = "Passwords do not match"
+                return@setOnClickListener
+            }
+
+            registerUser(name, emailText, pass)
         }
 
-        // Google Register
         googleRegister.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Google Registration Clicked",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Google Registration Clicked", Toast.LENGTH_SHORT).show()
         }
 
-        // Facebook Register
         facebookRegister.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Facebook Registration Clicked",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, "Facebook Registration Clicked", Toast.LENGTH_SHORT).show()
         }
-
 
         textLogin.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
-
         }
+    }
+
+    private fun registerUser(name: String, email: String, password: String) {
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+
+                if (task.isSuccessful) {
+
+                    val userId = auth.currentUser!!.uid
+
+                    val userMap = HashMap<String, Any>()
+                    userMap["uid"] = userId
+                    userMap["name"] = name
+                    userMap["email"] = email
+
+                    FirebaseDatabase.getInstance()
+                        .getReference("Users")
+                        .child(userId)
+                        .setValue(userMap)
+                        .addOnSuccessListener {
+
+                            Toast.makeText(
+                                this,
+                                "Registration Successful",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            startActivity(
+                                Intent(
+                                    this,
+                                    LoginActivity::class.java
+                                )
+                            )
+                            finish()
+                        }
+
+                } else {
+                    Toast.makeText(
+                        this,
+                        task.exception?.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
     }
 }

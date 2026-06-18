@@ -20,6 +20,7 @@ class LoginActivity : AppCompatActivity() {
         private lateinit var loginWithGoogle: TextView
         private lateinit var loginWithFacebook: TextView
         private lateinit var textRegister: TextView
+        private lateinit var textForgotPass: TextView
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -32,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
             loginWithGoogle = findViewById(R.id.loginWithGoogle)
             loginWithFacebook = findViewById(R.id.loginWithFacebook)
             textRegister = findViewById(R.id.textRegister)
+            textForgotPass = findViewById(R.id.loginforgotpass)
 
             // Login Button Click
             loginBtn.setOnClickListener {
@@ -75,6 +77,10 @@ class LoginActivity : AppCompatActivity() {
                     "Facebook Login Clicked",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+
+            textForgotPass.setOnClickListener {
+                startActivity(Intent(this, OtpActivity::class.java))
             }
 
             // Register

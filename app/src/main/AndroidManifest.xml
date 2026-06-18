@@ -34,7 +34,15 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".activity.Forgot_PsswordActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".activity.OtpActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".activity.HomeActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

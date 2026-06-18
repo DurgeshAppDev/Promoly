@@ -91,6 +91,7 @@
             android:id="@+id/loginUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:background="@drawable/whitecardbackground"
             android:hint="Enter your Username"
             android:textSize="@dimen/_12ssp"
@@ -123,6 +124,7 @@
             android:drawablePadding="@dimen/_10sdp"
             android:textColor="@color/grey"
             android:padding="@dimen/_10sdp"
+            android:singleLine="true"
             />
 
         <LinearLayout

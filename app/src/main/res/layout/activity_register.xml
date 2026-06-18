@@ -98,6 +98,7 @@
                 android:drawablePadding="@dimen/_10sdp"
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
+                android:singleLine="true"
                 />
 
             <TextView
@@ -119,10 +120,11 @@
                 android:background="@drawable/whitecardbackground"
                 android:hint="Enter your Email"
                 android:textSize="@dimen/_12ssp"
-                android:drawableStart="@drawable/lock"
+                android:drawableStart="@drawable/email"
                 android:drawablePadding="@dimen/_10sdp"
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
+                android:singleLine="true"
                 />
 
             <TextView
@@ -148,6 +150,7 @@
                 android:drawablePadding="@dimen/_10sdp"
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
+                android:singleLine="true"
                 />
             <TextView
                 android:layout_marginTop="@dimen/_5sdp"
@@ -172,6 +175,7 @@
                 android:drawablePadding="@dimen/_10sdp"
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
+                android:singleLine="true"
                 />
 
 
