@@ -125,6 +125,7 @@
             android:textColor="@color/grey"
             android:padding="@dimen/_10sdp"
             android:singleLine="true"
+            android:inputType="textPassword"
             />
 
         <LinearLayout

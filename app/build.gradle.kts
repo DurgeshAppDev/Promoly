@@ -5,11 +5,8 @@ plugins {
 
 android {
     namespace = "com.durgesh.promoly"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    // Cleaned up the SDK syntax for stability
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.durgesh.promoly"
@@ -23,9 +20,7 @@ android {
 
     buildTypes {
         release {
-            optimization {
-                enable = false
-            }
+            isMinifyEnabled = false // standard syntax to disable optimization/proguard
         }
     }
     compileOptions {
@@ -35,25 +30,33 @@ android {
 }
 
 dependencies {
+    // AndroidX & UI Essentials
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.material)
+
+    // Modern Google Sign-In (Credential Manager)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
+
+    // Firebase (Using Bill of Materials BOM for uniform versions)
     implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
-
-    implementation("com.google.firebase:firebase-database")
-
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
 
-    implementation(libs.googleid)
-    implementation(libs.material)
+    // Glide Image Loader
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    // Responsive UI Dimensions
+    implementation("com.intuit.sdp:sdp-android:1.1.1")
+    implementation("com.intuit.ssp:ssp-android:1.1.1")
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    implementation("com.intuit.sdp:sdp-android:1.1.1")
-    implementation("com.intuit.ssp:ssp-android:1.1.1")
 }
