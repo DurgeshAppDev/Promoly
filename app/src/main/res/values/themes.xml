@@ -7,7 +7,9 @@
         <item name="colorSecondaryVariant">@color/green</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-    </style>
 
+    </style>
+    <style name="CircleImageView" parent="">
+        <item name="cornerSize">50%</item> </style>
     <style name="Theme.Promoly" parent="Base.Theme.Promoly" />
 </resources>
