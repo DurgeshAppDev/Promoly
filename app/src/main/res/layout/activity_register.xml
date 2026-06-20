@@ -56,17 +56,8 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
             android:padding="@dimen/_15sdp"
+            android:elevation="@dimen/_8sdp"
             >
-
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="Welcome Back"-->
-<!--                android:layout_gravity="center"-->
-<!--                android:textSize="@dimen/_15ssp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:textColor="@color/blackR"-->
-<!--                />-->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -99,6 +90,7 @@
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
                 android:singleLine="true"
+                android:elevation="@dimen/_4sdp"
                 />
 
             <TextView
@@ -125,6 +117,7 @@
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
                 android:singleLine="true"
+                android:elevation="@dimen/_4sdp"
                 />
 
             <TextView
@@ -151,6 +144,7 @@
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
                 android:singleLine="true"
+                android:elevation="@dimen/_4sdp"
                 />
             <TextView
                 android:layout_marginTop="@dimen/_5sdp"
@@ -176,6 +170,7 @@
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
                 android:singleLine="true"
+                android:elevation="@dimen/_4sdp"
                 />
 
 
@@ -189,6 +184,8 @@
                 android:padding="@dimen/_5sdp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_15sdp"
+                android:elevation="@dimen/_6sdp"
+                android:stateListAnimator="@animator/button_click_animator"
                 />
         </LinearLayout>
 
@@ -222,6 +219,7 @@
                 android:layout_gravity="center"
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
+                android:elevation="@dimen/_4sdp"
                 />
 
             <TextView
@@ -237,6 +235,7 @@
                 android:layout_gravity="center"
                 android:textColor="@color/grey"
                 android:padding="@dimen/_10sdp"
+                android:elevation="@dimen/_4sdp"
                 />
 
         </LinearLayout>

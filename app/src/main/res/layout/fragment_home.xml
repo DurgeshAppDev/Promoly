@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundcolor"
+    android:fillViewport="true"
+    tools:context=".fragments.HomeFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/lightgreen"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_8sdp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                app:cardCornerRadius="@dimen/_20sdp"
+                app:cardElevation="@dimen/_4sdp"
+                app:strokeWidth="0dp">
+
+                <ImageView
+                    android:id="@+id/ivProfileImageofHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_image" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:text="Hello Durgesh"
+                android:textColor="#101828"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/btnNotification"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:background="#F2F4F7"
+                android:padding="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:scaleType="centerInside"
+                android:src="@drawable/bell"
+                android:elevation="@dimen/_4sdp"
+                android:stateListAnimator="@animator/button_click_animator"
+                app:shapeAppearanceOverlay="@style/CircleImageView" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_15sdp"
+            android:background="@drawable/whitecardbackground"
+            android:elevation="@dimen/_6sdp"
+            android:translationZ="@dimen/_2sdp">
+
+            <EditText
+                android:id="@+id/etSearchHome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="Search Creator, Campaign, Tasks"
+                android:inputType="text"
+                android:padding="@dimen/_12sdp"
+                android:paddingEnd="@dimen/_40sdp"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/_12ssp" />
+
+            <ImageButton
+                android:id="@+id/btnSearchHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/search"
+                android:background="@android:color/transparent"
+                android:layout_alignEnd="@id/etSearchHome"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:stateListAnimator="@animator/button_click_animator"
+                android:contentDescription="Search" />
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_15sdp"
+            android:weightSum="3">
+
+            <!-- Active Tasks Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_15sdp"
+                app:cardElevation="@dimen/_6sdp"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:stateListAnimator="@animator/button_click_animator">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/_10sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:src="@drawable/ic_tasks"
+                        android:layout_marginBottom="@dimen/_8sdp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tasks"
+                        android:textSize="@dimen/_11ssp"
+                        android:textColor="@color/grey"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12"
+                        android:textSize="@dimen/_16ssp"
+                        android:textColor="@color/blackR"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- All Collabs Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_15sdp"
+                app:cardElevation="@dimen/_6sdp"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:stateListAnimator="@animator/button_click_animator">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/_10sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:src="@drawable/ic_collab"
+                        android:layout_marginBottom="@dimen/_8sdp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Collabs"
+                        android:textSize="@dimen/_11ssp"
+                        android:textColor="@color/grey"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12"
+                        android:textSize="@dimen/_16ssp"
+                        android:textColor="@color/blackR"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Growth Card (Green Gradient) -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_100sdp"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/_5sdp"
+                app:cardBackgroundColor="@color/green"
+                app:cardCornerRadius="@dimen/_15sdp"
+                app:cardElevation="@dimen/_8sdp"
+                app:strokeWidth="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:stateListAnimator="@animator/button_click_animator">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/_10sdp"
+                    android:background="@drawable/button_gradient">
+
+                    <ImageView
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:src="@drawable/growth"
+                        app:tint="@color/white"
+                        android:layout_marginBottom="@dimen/_8sdp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Growth"
+                        android:textSize="@dimen/_11ssp"
+                        android:textColor="@color/white"
+                        android:alpha="0.8"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="12"
+                        android:textSize="@dimen/_16ssp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/_15sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Todays Tasks"
+                    android:textColor="#101828"
+                    android:textSize="@dimen/_14ssp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvViewAllCampaigns"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="View All"
+                    android:textColor="@color/green"
+                    android:textSize="@dimen/_11ssp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTodaysTasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:clipToPadding="false"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:nestedScrollingEnabled="true"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_campaign_layout" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Collab Requests"
+                android:textColor="#101828"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvNewCollabs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2 new"
+                android:padding="@dimen/_5sdp"
+                android:paddingLeft="@dimen/_2sdp"
+                android:paddingRight="@dimen/_2sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold"
+                android:background="@drawable/buttonlayout"/>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCollabRequests"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_230sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:nestedScrollingEnabled="true"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_collab_request_layout" />
+
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/_15sdp"
+        android:layout_marginVertical="@dimen/_10sdp"
+        app:cardCornerRadius="@dimen/_20sdp"
+        app:cardElevation="@dimen/_6sdp"
+        app:strokeWidth="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_gradient"
+            android:padding="@dimen/_15sdp">
+
+            <TextView
+                android:id="@+id/tvNextMeetingLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NEXT MEETING"
+                android:textColor="@color/white"
+                android:alpha="0.8"
+                android:textSize="@dimen/_10ssp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvMeetingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:text="Sync with Brand"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvNextMeetingLabel" />
+
+            <TextView
+                android:id="@+id/tvMeetingTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:text="2:00 PM"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvMeetingTitle" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnJoinMeeting"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_28sdp"
+                android:background="@drawable/white_button_bg"
+                android:text="JOIN"
+                android:textAllCaps="false"
+                android:textColor="@color/green"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="@dimen/_20sdp"
+                android:stateListAnimator="@animator/button_click_animator"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_25sdp" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

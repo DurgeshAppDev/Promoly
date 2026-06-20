@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_5sdp"
+    android:layout_marginVertical="@dimen/_5sdp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_8sdp"
+    app:cardElevation="@dimen/_2sdp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_10sdp">
+
+        <ImageView
+            android:id="@+id/ivCampaignIcon"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:src="@drawable/profile_image"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvCampaignTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:text="Campaign Name"
+            android:textColor="#101828"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/tvCampaignStatus"
+            app:layout_constraintStart_toEndOf="@+id/ivCampaignIcon"
+            app:layout_constraintTop_toTopOf="@+id/ivCampaignIcon" />
+
+        <TextView
+            android:id="@+id/tvCampaignDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Campaign description or subtitle"
+            android:textColor="@color/assetgrey"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivCampaignIcon"
+            app:layout_constraintEnd_toEndOf="@+id/tvCampaignTitle"
+            app:layout_constraintStart_toStartOf="@+id/tvCampaignTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvCampaignTitle" />
+
+        <TextView
+            android:id="@+id/tvCampaignStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingVertical="@dimen/_2sdp"
+            android:text="Active"
+            android:textColor="@color/green"
+            android:textSize="@dimen/_9ssp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

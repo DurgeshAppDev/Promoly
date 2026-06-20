@@ -56,6 +56,7 @@
         android:layout_marginLeft="@dimen/_10sdp"
         android:layout_marginRight="@dimen/_10sdp"
         android:padding="@dimen/_15sdp"
+        android:elevation="@dimen/_8sdp"
         >
 
         <TextView
@@ -99,6 +100,7 @@
             android:drawablePadding="@dimen/_10sdp"
             android:textColor="@color/grey"
             android:padding="@dimen/_10sdp"
+            android:elevation="@dimen/_4sdp"
             />
 
         <TextView
@@ -126,6 +128,7 @@
             android:padding="@dimen/_10sdp"
             android:singleLine="true"
             android:inputType="textPassword"
+            android:elevation="@dimen/_4sdp"
             />
 
         <LinearLayout
@@ -163,6 +166,8 @@
             android:padding="@dimen/_5sdp"
             android:textColor="@color/white"
             android:textSize="@dimen/_15sdp"
+            android:elevation="@dimen/_6sdp"
+            android:stateListAnimator="@animator/button_click_animator"
             />
     </LinearLayout>
 
@@ -196,6 +201,10 @@
             android:layout_gravity="center"
             android:textColor="@color/grey"
             android:padding="@dimen/_10sdp"
+            android:elevation="@dimen/_4sdp"
+            android:stateListAnimator="@animator/button_click_animator"
+            android:clickable="true"
+            android:focusable="true"
             />
 
         <TextView
@@ -211,6 +220,10 @@
             android:layout_gravity="center"
             android:textColor="@color/grey"
             android:padding="@dimen/_10sdp"
+            android:elevation="@dimen/_4sdp"
+            android:stateListAnimator="@animator/button_click_animator"
+            android:clickable="true"
+            android:focusable="true"
             />
 
     </LinearLayout>
