@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="@dimen/_280sdp"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/_5sdp"
-    android:layout_marginVertical="@dimen/_5sdp"
+    android:layout_marginHorizontal="@dimen/_4sdp"
+    android:layout_marginVertical="@dimen/_4sdp"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="@dimen/_8sdp"
-    app:cardElevation="@dimen/_2sdp">
+    app:cardCornerRadius="@dimen/_12sdp"
+    app:cardElevation="@dimen/_4sdp"
+    app:cardUseCompatPadding="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/_10sdp">
+        android:padding="@dimen/_12sdp">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivCampaignIcon"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="@dimen/_35sdp"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
             android:src="@drawable/profile_image"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -27,7 +30,7 @@
             android:id="@+id/tvCampaignTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_12sdp"
             android:text="Campaign Name"
             android:textColor="#101828"
             android:textSize="@dimen/_12ssp"
@@ -41,9 +44,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Campaign description or subtitle"
-            android:textColor="@color/assetgrey"
+            android:textColor="@color/grey"
             android:textSize="@dimen/_10ssp"
-            app:layout_constraintBottom_toBottomOf="@+id/ivCampaignIcon"
             app:layout_constraintEnd_toEndOf="@+id/tvCampaignTitle"
             app:layout_constraintStart_toStartOf="@+id/tvCampaignTitle"
             app:layout_constraintTop_toBottomOf="@+id/tvCampaignTitle" />
@@ -62,6 +64,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

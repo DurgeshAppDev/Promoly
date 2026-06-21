@@ -9,10 +9,8 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.recyclerview.widget.RecyclerView
 import com.durgesh.promoly.R
-
-
 import com.durgesh.promoly.model.ModelCollabRequest
-
+import com.durgesh.promoly.util.showToast
 
 class AdapterCollabRequest(private val list: List<ModelCollabRequest>) : RecyclerView.Adapter<AdapterCollabRequest.ViewHolder>() {
 
@@ -29,10 +27,10 @@ class AdapterCollabRequest(private val list: List<ModelCollabRequest>) : Recycle
         holder.image.setImageResource(item.coProfileImg)
 
         holder.tvAccept.setOnClickListener {
-            Toast.makeText(holder.itemView.context, "Accepted request of ${item.coName}", Toast.LENGTH_SHORT).show()
+            holder.itemView.context.showToast("Accepted request of ${item.coName}")
         }
         holder.tvDecline.setOnClickListener {
-            Toast.makeText(holder.itemView.context, "Declined request of ${item.coName}", Toast.LENGTH_SHORT).show()
+            holder.itemView.context.showToast("Declined request of ${item.coName}")
         }
     }
 

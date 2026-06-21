@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/_12sdp"
+    android:layout_marginHorizontal="@dimen/_4sdp"
     android:layout_marginVertical="@dimen/_6sdp"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="@dimen/_15sdp"
-    app:cardElevation="@dimen/_5sdp"
+    app:cardElevation="@dimen/_4sdp"
     app:cardUseCompatPadding="true"
     app:strokeWidth="0dp">
 
@@ -18,8 +18,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivProfileImagecollab"
-            android:layout_width="@dimen/_45sdp"
-            android:layout_height="@dimen/_45sdp"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
             android:src="@drawable/profile_image"
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/CircleImageView"
@@ -33,69 +33,66 @@
             android:layout_marginStart="@dimen/_12sdp"
             android:text="Sarah (Designer)"
             android:textColor="#101828"
-            android:textSize="@dimen/_13ssp"
+            android:textSize="@dimen/_14ssp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivProfileImagecollab"
             app:layout_constraintTop_toTopOf="@+id/ivProfileImagecollab" />
 
         <TextView
-            android:id="@+id/tvCollabMessage"
+            android:id="@+id/tvProjectTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Wants to collaborate on UI Project"
-            android:textColor="@color/grey"
-            android:textSize="@dimen/_10ssp"
+            android:text="UI/UX Redesign"
+            android:textColor="@color/green"
+            android:textSize="@dimen/_11ssp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/tvCollabName"
             app:layout_constraintStart_toStartOf="@+id/tvCollabName"
             app:layout_constraintTop_toBottomOf="@+id/tvCollabName" />
 
-        <LinearLayout
-            android:id="@+id/llButtons"
+        <TextView
+            android:id="@+id/tvCollabDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:orientation="horizontal"
+            android:text="Designing the high-fidelity wireframes for the dashboard."
+            android:textColor="@color/grey"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintEnd_toEndOf="@+id/tvCollabName"
             app:layout_constraintStart_toStartOf="@+id/tvCollabName"
-            app:layout_constraintTop_toBottomOf="@+id/tvCollabMessage">
+            app:layout_constraintTop_toBottomOf="@+id/tvProjectTitle" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAccept"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/_32sdp"
-                android:background="@drawable/buttonlayout"
-                app:backgroundTint="@null"
-                android:text="Accept"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_10ssp"
-                android:textStyle="bold"
-                app:cornerRadius="@dimen/_8sdp"
-                app:elevation="@dimen/_3sdp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingHorizontal="@dimen/_15sdp"
-                android:stateListAnimator="@animator/button_click_animator"
-                />
+        <LinearLayout
+            android:id="@+id/llProgress"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvCollabDescription">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDecline"
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/projectProgressBar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:progress="65"
+                app:indicatorColor="@color/green"
+                app:trackColor="@color/lightgreen"
+                app:trackCornerRadius="@dimen/_4sdp"
+                app:trackThickness="@dimen/_6sdp" />
+
+            <TextView
+                android:id="@+id/tvProgressPercent"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/_32sdp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_10sdp"
-                android:backgroundTint="#F2F4F7"
-                android:text="Decline"
-                android:textAllCaps="false"
-                android:textColor="#475467"
+                android:text="65%"
+                android:textColor="#101828"
                 android:textSize="@dimen/_10ssp"
-                android:textStyle="bold"
-                app:cornerRadius="@dimen/_8sdp"
-                app:elevation="0dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:paddingHorizontal="@dimen/_15sdp"
-                android:stateListAnimator="@animator/button_click_animator"
-                />
+                android:textStyle="bold" />
 
         </LinearLayout>
 

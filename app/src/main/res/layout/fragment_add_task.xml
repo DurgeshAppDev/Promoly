@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundcolor"
+    android:fillViewport="true"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    tools:context=".fragments.AddTaskFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/_25sdp"
+        android:paddingBottom="@dimen/_40sdp">
+
+        <!-- Toolbar Area -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/_15sdp"
+            android:paddingVertical="@dimen/_10sdp">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/user"
+                app:tint="@color/green" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:layout_toEndOf="@id/btnBack"
+                android:text="New Collaboration"
+                android:textColor="@color/green"
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                app:cardCornerRadius="@dimen/_16sdp"
+                app:cardElevation="@dimen/_2sdp"
+                app:strokeWidth="0dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_image" />
+            </com.google.android.material.card.MaterialCardView>
+        </RelativeLayout>
+
+        <!-- Form Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/_15sdp"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <!-- Project Title -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:text="Project Title"
+                android:textColor="@color/assetgrey"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="@dimen/_3sdp"
+                app:cardUseCompatPadding="true"
+                app:strokeColor="#E4E7EC"
+                app:strokeWidth="1dp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="e.g. Summer Lifestyle Lookbook 2024"
+                    android:padding="@dimen/_12sdp"
+                    android:singleLine="true"
+                    android:textColor="@color/blackR"
+                    android:textSize="@dimen/_11ssp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Category -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Category"
+                android:textColor="@color/assetgrey"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="@dimen/_3sdp"
+                app:cardUseCompatPadding="true"
+                app:strokeColor="#E4E7EC"
+                app:strokeWidth="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_12sdp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Fashion"
+                        android:textColor="@color/blackR"
+                        android:textSize="@dimen/_11ssp" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_home"
+                        app:tint="@color/grey" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Preferred Platform -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Preferred Platform"
+                android:textColor="@color/assetgrey"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="@dimen/_3sdp"
+                app:cardUseCompatPadding="true"
+                app:strokeColor="#E4E7EC"
+                app:strokeWidth="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_12sdp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Instagram"
+                        android:textColor="@color/blackR"
+                        android:textSize="@dimen/_11ssp" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_home"
+                        app:tint="@color/grey" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Project Description -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Project Description"
+                android:textColor="@color/assetgrey"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="@dimen/_3sdp"
+                app:cardUseCompatPadding="true"
+                app:strokeColor="#E4E7EC"
+                app:strokeWidth="1dp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_100sdp"
+                    android:background="@android:color/transparent"
+                    android:gravity="top"
+                    android:hint="Describe your vision, goals, and what makes this collaboration unique..."
+                    android:padding="@dimen/_12sdp"
+                    android:textColor="@color/blackR"
+                    android:textSize="@dimen/_11ssp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Requirements & Skills -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Requirements &amp; Skills"
+                android:textColor="@color/assetgrey"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:cardBackgroundColor="#F8F9FB"
+                app:cardCornerRadius="@dimen/_12sdp"
+                app:cardElevation="0dp"
+                app:strokeColor="#E4E7EC"
+                app:strokeWidth="1dp">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_10sdp"
+                    app:chipSpacingHorizontal="@dimen/_8sdp"
+                    app:chipSpacingVertical="@dimen/_5sdp">
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Photography"
+                        app:chipBackgroundColor="@color/lightgreen"
+                        app:chipCornerRadius="@dimen/_8sdp"
+                        app:chipStrokeWidth="0dp"
+                        app:closeIconVisible="true"
+                        android:textColor="@color/green"
+                        android:textSize="@dimen/_10ssp" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Video Editing"
+                        app:chipBackgroundColor="@color/lightgreen"
+                        app:chipCornerRadius="@dimen/_8sdp"
+                        app:chipStrokeWidth="0dp"
+                        app:closeIconVisible="true"
+                        android:textColor="@color/green"
+                        android:textSize="@dimen/_10ssp" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/Widget.MaterialComponents.Chip.Action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Storytelling"
+                        app:chipBackgroundColor="@color/lightgreen"
+                        app:chipCornerRadius="@dimen/_8sdp"
+                        app:chipStrokeWidth="0dp"
+                        app:closeIconVisible="true"
+                        android:textColor="@color/green"
+                        android:textSize="@dimen/_10ssp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_28sdp"
+                        android:text="+ Add Skill"
+                        android:textAllCaps="false"
+                        android:textColor="@color/green"
+                        android:textSize="@dimen/_10ssp"
+                        app:cornerRadius="@dimen/_14sdp"
+                        app:strokeColor="@color/green"
+                        app:strokeWidth="1dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp" />
+
+                </com.google.android.material.chip.ChipGroup>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Budget Range -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Budget Range (Optional)"
+                android:textColor="@color/assetgrey"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="@dimen/_3sdp"
+                app:cardUseCompatPadding="true"
+                app:strokeColor="#E4E7EC"
+                app:strokeWidth="1dp">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="$ 500 - 1000"
+                    android:padding="@dimen/_12sdp"
+                    android:singleLine="true"
+                    android:textColor="@color/blackR"
+                    android:textSize="@dimen/_11ssp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Estimated Timeline -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="Estimated Timeline (Optional)"
+                android:textColor="@color/assetgrey"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="@dimen/_3sdp"
+                app:cardUseCompatPadding="true"
+                app:strokeColor="#E4E7EC"
+                app:strokeWidth="1dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_12sdp">
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toStartOf="@+id/ivCalendar"
+                        android:background="@android:color/transparent"
+                        android:hint="e.g. 2-3 Weeks"
+                        android:padding="0dp"
+                        android:singleLine="true"
+                        android:textColor="@color/blackR"
+                        android:textSize="@dimen/_11ssp" />
+
+                    <ImageView
+                        android:id="@+id/ivCalendar"
+                        android:layout_width="@dimen/_18sdp"
+                        android:layout_height="@dimen/_18sdp"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/timer"
+                        app:tint="@color/grey" />
+                </RelativeLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Post Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPostCollab"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:backgroundTint="@color/green"
+                android:text="Post Collaboration"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                app:cornerRadius="@dimen/_12sdp"
+                app:elevation="@dimen/_4sdp"
+                app:icon="@drawable/ic_add"
+                app:iconGravity="textEnd"
+                app:iconSize="@dimen/_20sdp"
+                android:stateListAnimator="@animator/button_click_animator" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:text="This will be shared with verified creators in the hubs."
+                android:textColor="@color/grey"
+                android:textSize="@dimen/_9ssp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

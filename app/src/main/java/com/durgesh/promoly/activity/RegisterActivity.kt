@@ -10,6 +10,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.durgesh.promoly.R
+import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.showToast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
@@ -90,7 +92,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         facebookRegister.setOnClickListener {
-            Toast.makeText(this, "Facebook Registration Clicked", Toast.LENGTH_SHORT).show()
+            showToast("Facebook Registration Clicked")
         }
 
         textLogin.setOnClickListener {
@@ -108,7 +110,7 @@ class RegisterActivity : AppCompatActivity() {
                     val userId = auth.currentUser!!.uid
                     saveUserToDatabase(userId, name, email)
                 } else {
-                    Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
+                    showToast(task.exception?.message ?: "Unknown error", Toast.LENGTH_LONG)
                 }
             }
     }
@@ -144,7 +146,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
             } catch (e: GetCredentialException) {
                 Log.w(TAG, "Google Sign-In failed via Credential Manager", e)
-                Toast.makeText(this@RegisterActivity, "Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                showToast("Sign-In failed: ${e.message}")
             }
         }
     }
@@ -162,7 +164,7 @@ class RegisterActivity : AppCompatActivity() {
                     }
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
+                    showToast("Authentication Failed.")
                 }
             }
     }
@@ -179,16 +181,16 @@ class RegisterActivity : AppCompatActivity() {
         userMap["email"] = email
 
         // 3. Save to a "Users" collection using the unique userId as the Document ID
-        db.collection("Users")
+        db.collection(Constants.COLLECTION_USERS)
             .document(userId)
             .set(userMap)
             .addOnSuccessListener {
-                Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
+                showToast("Registration Successful")
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Firestore error: ${e.message}", Toast.LENGTH_SHORT).show()
+                showToast("Firestore error: ${e.message}")
             }
     }
 }

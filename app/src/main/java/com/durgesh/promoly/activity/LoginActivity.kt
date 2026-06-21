@@ -14,6 +14,8 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import com.durgesh.promoly.R
+import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.showToast
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -78,15 +80,11 @@ class LoginActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show()
+                        showToast("Login Successful!")
                         startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     } else {
-                        Toast.makeText(
-                            this,
-                            "Authentication Failed: ${task.exception?.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        showToast("Authentication Failed: ${task.exception?.message}", Toast.LENGTH_LONG)
                     }
                 }
         }
@@ -98,7 +96,7 @@ class LoginActivity : AppCompatActivity() {
 
         // Facebook Login
         loginWithFacebook.setOnClickListener {
-            Toast.makeText(this, "Facebook Login Clicked", Toast.LENGTH_SHORT).show()
+            showToast("Facebook Login Clicked")
         }
 
         textForgotPass.setOnClickListener {
@@ -138,7 +136,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             } catch (e: GetCredentialException) {
                 Log.w(TAG, "Credential Manager failure", e)
-                Toast.makeText(this@LoginActivity, "Google Sign-In failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                showToast("Google Sign-In failed: ${e.message}")
             }
         }
     }
@@ -154,13 +152,13 @@ class LoginActivity : AppCompatActivity() {
                         // Onboard fresh Google sign-ins into Firestore
                         saveUserToDatabase(user.uid, user.displayName ?: "Google User", user.email ?: "")
                     } else if (user != null) {
-                        Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show()
+                        showToast("Welcome back!")
                         startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     }
                 } else {
                     Log.w(TAG, "Firebase context link failed", task.exception)
-                    Toast.makeText(this, "Firebase Identity Link Failed.", Toast.LENGTH_SHORT).show()
+                    showToast("Firebase Identity Link Failed.")
                 }
             }
     }
@@ -176,17 +174,17 @@ class LoginActivity : AppCompatActivity() {
         userMap["email"] = email
 
         // 3. Save to a "Users" collection using the unique userId as the Document ID
-        db.collection("Users")
+        db.collection(Constants.COLLECTION_USERS)
             .document(userId)
             .set(userMap)
             .addOnSuccessListener {
-                Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
+                showToast("Registration Successful")
                 // Fixed: Takes the authenticated user directly into the main app experience
                 startActivity(Intent(this, HomeActivity::class.java))
                 finish()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Firestore error: ${e.message}", Toast.LENGTH_SHORT).show()
+                showToast("Firestore error: ${e.message}")
             }
     }
 }

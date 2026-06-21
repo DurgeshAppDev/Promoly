@@ -16,6 +16,8 @@ import com.durgesh.promoly.adapter.AdapterCollabRequest
 import com.durgesh.promoly.adapter.AdapterTasks
 import com.durgesh.promoly.model.ModelCollabRequest
 import com.durgesh.promoly.model.ModelTasks
+import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.showToast
 import com.google.firebase.firestore.FirebaseFirestore
 
 class HomeFragment : Fragment() {
@@ -35,7 +37,7 @@ class HomeFragment : Fragment() {
 
         profileImage.setOnClickListener {
             //go to profile
-            Toast.makeText(requireContext(), "profile image is clicked", Toast.LENGTH_SHORT).show()
+            showToast("profile image is clicked")
         }
 
         // Dummy data for Tasks
@@ -62,10 +64,11 @@ class HomeFragment : Fragment() {
         rvCollabRequests.layoutManager = LinearLayoutManager(requireContext())
         rvCollabRequests.adapter = AdapterCollabRequest(collabList)
 
+
         searchButton.setOnClickListener {
             val searchText = searchEditText.text.toString()
             if (searchText.isNotEmpty()) {
-                FirebaseFirestore.getInstance().collection("users")
+                FirebaseFirestore.getInstance().collection(Constants.COLLECTION_USERS)
                     .whereGreaterThanOrEqualTo("username", searchText)
                     .whereLessThanOrEqualTo("username", searchText + "\uf8ff")
                     .get()
@@ -73,7 +76,7 @@ class HomeFragment : Fragment() {
                         // Update your adapter with documents.toObjects(User::class.java)
                     }
                     .addOnFailureListener { e ->
-                        Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        showToast("Error: ${e.message}")
                     }
             }
         }

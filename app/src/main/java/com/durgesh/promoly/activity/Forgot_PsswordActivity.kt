@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.durgesh.promoly.R
+import com.durgesh.promoly.util.showToast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -58,16 +59,16 @@ class Forgot_PsswordActivity : AppCompatActivity() {
                 currentUser.updatePassword(pass)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            Toast.makeText(this, "Password Updated Successfully", Toast.LENGTH_SHORT).show()
+                            showToast("Password Updated Successfully")
                             val intent = Intent(this, LoginActivity::class.java)
                             startActivity(intent)
                             finish()
                         } else {
-                            Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                            showToast("Error: ${task.exception?.message}", Toast.LENGTH_LONG)
                         }
                     }
             } else {
-                Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+                showToast("User not logged in")
             }
         }
     }

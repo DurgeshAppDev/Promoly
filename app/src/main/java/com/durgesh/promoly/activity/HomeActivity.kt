@@ -5,10 +5,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.durgesh.promoly.R
+import com.durgesh.promoly.fragments.AddTaskFragment
 import com.durgesh.promoly.fragments.CollabsFragment
 import com.durgesh.promoly.fragments.HomeFragment
 import com.durgesh.promoly.fragments.ProfileFragment
 import com.durgesh.promoly.fragments.TasksFragment
+import com.durgesh.promoly.util.replaceFragment
+import com.durgesh.promoly.util.showToast
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -35,26 +38,26 @@ class HomeActivity : AppCompatActivity() {
         }
 
         if (savedInstanceState == null) {
-            replaceFragment(HomeFragment())
+            supportFragmentManager.replaceFragment(R.id.fragment_container, HomeFragment())
             bottomNavigationView.selectedItemId = R.id.navigation_home
         }
 
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
-                    replaceFragment(HomeFragment())
+                    supportFragmentManager.replaceFragment(R.id.fragment_container, HomeFragment())
                     true
                 }
                 R.id.navigation_collabs -> {
-                    replaceFragment(CollabsFragment())
+                    supportFragmentManager.replaceFragment(R.id.fragment_container, CollabsFragment())
                     true
                 }
                 R.id.navigation_tasks -> {
-                    replaceFragment(TasksFragment())
+                    supportFragmentManager.replaceFragment(R.id.fragment_container, TasksFragment())
                     true
                 }
                 R.id.navigation_profile -> {
-                    replaceFragment(ProfileFragment())
+                    supportFragmentManager.replaceFragment(R.id.fragment_container, ProfileFragment())
                     true
                 }
                 else -> false
@@ -62,13 +65,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         fabCenter.setOnClickListener {
-            Toast.makeText(this, "Central action clicked!", Toast.LENGTH_SHORT).show()
+            supportFragmentManager.replaceFragment(R.id.fragment_container, AddTaskFragment())
+            true
         }
-    }
-
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, fragment)
-            .commit()
     }
 }

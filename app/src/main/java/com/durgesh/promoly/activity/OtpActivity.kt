@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.durgesh.promoly.R
+import com.durgesh.promoly.util.showToast
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.PhoneAuthOptions
@@ -70,7 +71,7 @@ class OtpActivity : AppCompatActivity() {
                 val credential = PhoneAuthProvider.getCredential(storedVerificationId!!, code)
                 signInWithPhoneAuthCredential(credential)
             } else {
-                Toast.makeText(this, "Please request an OTP first", Toast.LENGTH_SHORT).show()
+                showToast("Please request an OTP first")
             }
         }
 
@@ -87,7 +88,7 @@ class OtpActivity : AppCompatActivity() {
                 // Fixed: Explicitly passed using Kotlin's non-null assertion operator (!!) since we already checked it's not null
                 resendVerificationCode(phoneNumber, resendToken!!)
             } else {
-                Toast.makeText(this, "Cannot resend yet. Please wait for the code to be sent first.", Toast.LENGTH_SHORT).show()
+                showToast("Cannot resend yet. Please wait for the code to be sent first.")
             }
         }
     }
@@ -101,7 +102,7 @@ class OtpActivity : AppCompatActivity() {
 
         override fun onVerificationFailed(e: FirebaseException) {
             Log.w(TAG, "onVerificationFailed", e)
-            Toast.makeText(this@OtpActivity, "Verification Failed: ${e.message}", Toast.LENGTH_LONG).show()
+            showToast("Verification Failed: ${e.message}", Toast.LENGTH_LONG)
         }
 
         override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
@@ -109,7 +110,7 @@ class OtpActivity : AppCompatActivity() {
             storedVerificationId = verificationId
             resendToken = token
 
-            Toast.makeText(this@OtpActivity, "OTP Code sent to your device!", Toast.LENGTH_SHORT).show()
+            showToast("OTP Code sent to your device!")
         }
     }
 
@@ -139,13 +140,13 @@ class OtpActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "OTP Verified successfully!", Toast.LENGTH_SHORT).show()
+                    showToast("OTP Verified successfully!")
 
                     val intent = Intent(this, Forgot_PsswordActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
-                    Toast.makeText(this, "Invalid OTP code entered.", Toast.LENGTH_SHORT).show()
+                    showToast("Invalid OTP code entered.")
                 }
             }
     }

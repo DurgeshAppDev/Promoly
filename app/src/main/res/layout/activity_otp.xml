@@ -2,168 +2,187 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/backgroundcolor"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context=".activity.OtpActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center"
-        >
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_40sdp">
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/whitecardbackground"
-            android:layout_marginTop="@dimen/_15ssp"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:padding="@dimen/_15sdp"
-            android:elevation="@dimen/_8sdp"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Request OTP"
-                android:layout_gravity="center"
-                android:textSize="@dimen/_15ssp"
-                android:textStyle="bold"
-                android:textColor="@color/blackR"
-                android:layout_marginBottom="@dimen/_10sdp"
-                />
-
-
-
-            <TextView
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Phone Number"
-                android:gravity="start"
-                android:textSize="@dimen/_12ssp"
-                android:textStyle="bold"
-                android:textColor="@color/blackR"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginBottom="@dimen/_2sdp"
-                />
-            <EditText
-                android:id="@+id/otpPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/whitecardbackground"
-                android:hint="Enter Ph.no (e.g., +919876543210)"
-                android:textSize="@dimen/_12ssp"
-                android:inputType="phone"
-                android:drawablePadding="@dimen/_10sdp"
-                android:textColor="@color/grey"
-                android:padding="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:singleLine="true"
-                android:elevation="@dimen/_4sdp"
-                />
-
-            <Button
-                android:id="@+id/changePasswordbtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/buttonlayout"
-                android:text="send Request"
-                android:padding="@dimen/_5sdp"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_15sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:elevation="@dimen/_6sdp"
-                android:stateListAnimator="@animator/button_click_animator"
-                />
-
-            <TextView
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="OTP"
-                android:gravity="start"
-                android:textSize="@dimen/_12ssp"
-                android:textStyle="bold"
-                android:textColor="@color/blackR"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_marginBottom="@dimen/_2sdp"
-                />
-            <EditText
-                android:id="@+id/otp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/whitecardbackground"
-                android:hint="Enter 6-digit OTP"
-                android:textSize="@dimen/_12ssp"
-                android:textColor="@color/grey"
-                android:gravity="center"
-                android:padding="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:singleLine="true"
-                android:elevation="@dimen/_4sdp"
-                />
-
-            <TextView
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00:45 sec"
-                android:layout_gravity="end"
-                android:gravity="start"
-                android:textSize="@dimen/_12ssp"
-                android:drawableLeft="@drawable/timer"
-                android:drawablePadding="@dimen/_8sdp"
-                android:textStyle="bold"
-                android:textColor="@color/blackR"
-                android:layout_marginRight="@dimen/_15sdp"
-                android:layout_marginBottom="@dimen/_15sdp"
-                />
+            android:layout_marginTop="@dimen/_100sdp"
+            android:layout_marginHorizontal="@dimen/_15sdp"
+            app:cardCornerRadius="@dimen/_15sdp"
+            app:cardElevation="@dimen/_6sdp"
+            app:cardUseCompatPadding="true"
+            app:strokeWidth="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_weight="2"
-                >
+                android:orientation="vertical"
+                android:padding="@dimen/_15sdp">
 
-                <Button
-                    android:id="@+id/verifyOtpbtn"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/buttonlayout"
-                    android:text="verify otp"
-                    android:padding="@dimen/_5sdp"
-                    android:layout_weight="1"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_15sdp"
-                    android:layout_marginEnd="@dimen/_10sdp"
-                    android:layout_marginBottom="@dimen/_10sdp"
-                    android:singleLine="true"
-                    android:elevation="@dimen/_6sdp"
+                    android:text="Request OTP"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/_15ssp"
+                    android:textStyle="bold"
+                    android:textColor="@color/blackR"
+                    android:layout_marginBottom="@dimen/_15sdp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone Number"
+                    android:textSize="@dimen/_11ssp"
+                    android:textStyle="bold"
+                    android:textColor="@color/blackR"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_2sdp"
+                    app:cardUseCompatPadding="true"
+                    app:strokeColor="#E4E7EC"
+                    app:strokeWidth="1dp">
+
+                    <EditText
+                        android:id="@+id/otpPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:hint="Enter Ph.no (e.g., +919876543210)"
+                        android:inputType="phone"
+                        android:padding="@dimen/_10sdp"
+                        android:singleLine="true"
+                        android:textColor="@color/blackR"
+                        android:textSize="@dimen/_11ssp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/changePasswordbtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:backgroundTint="@color/green"
+                    android:elevation="@dimen/_4sdp"
+                    android:padding="@dimen/_10sdp"
                     android:stateListAnimator="@animator/button_click_animator"
-                    />
+                    android:text="SEND REQUEST"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_13ssp"
+                    android:textStyle="bold"
+                    app:cornerRadius="@dimen/_10sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp" />
 
-                <Button
-                android:id="@+id/resendOtpbtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                android:background="@drawable/buttonlayout"
-                android:text="resend otp"
-                android:padding="@dimen/_5sdp"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_15sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:elevation="@dimen/_6sdp"
-                android:stateListAnimator="@animator/button_click_animator"
-                />
-        </LinearLayout>
-        </LinearLayout>
+                <TextView
+                    android:layout_marginTop="@dimen/_15sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Enter 6-Digit OTP"
+                    android:textSize="@dimen/_11ssp"
+                    android:textStyle="bold"
+                    android:textColor="@color/blackR"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp" />
 
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_2sdp"
+                    app:cardUseCompatPadding="true"
+                    app:strokeColor="#E4E7EC"
+                    app:strokeWidth="1dp">
+
+                    <EditText
+                        android:id="@+id/otp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:gravity="center"
+                        android:hint="0 0 0 0 0 0"
+                        android:inputType="number"
+                        android:padding="@dimen/_10sdp"
+                        android:singleLine="true"
+                        android:textColor="@color/blackR"
+                        android:textSize="@dimen/_14ssp"
+                        android:letterSpacing="0.5" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:45 sec"
+                    android:layout_gravity="end"
+                    android:textSize="@dimen/_11ssp"
+                    android:drawablePadding="@dimen/_8sdp"
+                    app:drawableStartCompat="@drawable/timer"
+                    android:textStyle="bold"
+                    android:textColor="@color/grey"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_15sdp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/verifyOtpbtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:backgroundTint="@color/green"
+                        android:elevation="@dimen/_4sdp"
+                        android:stateListAnimator="@animator/button_click_animator"
+                        android:text="VERIFY"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="bold"
+                        app:cornerRadius="@dimen/_10sdp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/resendOtpbtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="@dimen/_5sdp"
+                        android:backgroundTint="#F2F4F7"
+                        android:elevation="@dimen/_2sdp"
+                        android:stateListAnimator="@animator/button_click_animator"
+                        android:text="RESEND"
+                        android:textColor="@color/assetgrey"
+                        android:textSize="@dimen/_12ssp"
+                        android:textStyle="bold"
+                        app:cornerRadius="@dimen/_10sdp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>

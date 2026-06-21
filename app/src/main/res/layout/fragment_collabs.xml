@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgroundcolor"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    tools:context=".fragments.CollabsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingTop="@dimen/_25sdp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/lightgreen"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_8sdp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                app:cardCornerRadius="@dimen/_20sdp"
+                app:cardElevation="@dimen/_4sdp"
+                app:cardUseCompatPadding="true"
+                app:strokeWidth="0dp">
+
+                <ImageView
+                    android:id="@+id/ivProfileImageofHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/profile_image" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:text="Hello Durgesh"
+                android:textColor="#101828"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/btnNotification"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:background="#F2F4F7"
+                android:padding="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:scaleType="centerInside"
+                android:src="@drawable/bell"
+                android:elevation="@dimen/_4sdp"
+                android:stateListAnimator="@animator/button_click_animator"
+                app:shapeAppearanceOverlay="@style/CircleImageView" />
+        </LinearLayout>
+
+        <!-- Search Bar -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_15sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
+            app:cardCornerRadius="@dimen/_12sdp"
+            app:cardElevation="@dimen/_4sdp"
+            app:cardUseCompatPadding="true"
+            app:strokeColor="#E4E7EC"
+            app:strokeWidth="1dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/_10sdp">
+
+                <EditText
+                    android:id="@+id/etSearchHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:hint="Search Creator, Campaign, Tasks"
+                    android:inputType="text"
+                    android:padding="@dimen/_12sdp"
+                    android:paddingEnd="@dimen/_40sdp"
+                    android:textColor="@color/blackR"
+                    android:textSize="@dimen/_11ssp" />
+
+                <ImageButton
+                    android:id="@+id/btnSearchHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@id/etSearchHome"
+                    android:layout_centerVertical="true"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="Search"
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/search"
+                    android:stateListAnimator="@animator/button_click_animator" />
+
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Category Filters -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:clipChildren="false"
+            android:clipToPadding="false">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:clipChildren="false"
+                android:clipToPadding="false">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAllCollab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_32sdp"
+                    android:backgroundTint="@color/green"
+                    android:text="All"
+                    android:textSize="@dimen/_11ssp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:layout_margin="@dimen/_5sdp"
+                    app:cornerRadius="@dimen/_10sdp"
+                    app:elevation="@dimen/_3sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:stateListAnimator="@animator/button_click_animator"
+                    android:textAllCaps="false"
+                    android:paddingHorizontal="@dimen/_20sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnActiveCollab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_32sdp"
+                    android:backgroundTint="#F2F4F7"
+                    android:text="Active"
+                    android:textSize="@dimen/_11ssp"
+                    android:textColor="@color/assetgrey"
+                    android:textStyle="bold"
+                    android:layout_margin="@dimen/_5sdp"
+                    app:cornerRadius="@dimen/_10sdp"
+                    app:elevation="@dimen/_2sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:stateListAnimator="@animator/button_click_animator"
+                    android:textAllCaps="false"
+                    android:paddingHorizontal="@dimen/_20sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPendingCollab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_32sdp"
+                    android:backgroundTint="#F2F4F7"
+                    android:text="Pending"
+                    android:textSize="@dimen/_11ssp"
+                    android:textColor="@color/assetgrey"
+                    android:textStyle="bold"
+                    android:layout_margin="@dimen/_5sdp"
+                    app:cornerRadius="@dimen/_10sdp"
+                    app:elevation="@dimen/_2sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:stateListAnimator="@animator/button_click_animator"
+                    android:textAllCaps="false"
+                    android:paddingHorizontal="@dimen/_20sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCompletedCollab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_32sdp"
+                    android:backgroundTint="#F2F4F7"
+                    android:text="Completed"
+                    android:textSize="@dimen/_11ssp"
+                    android:textColor="@color/assetgrey"
+                    android:textStyle="bold"
+                    android:layout_margin="@dimen/_5sdp"
+                    app:cornerRadius="@dimen/_10sdp"
+                    app:elevation="@dimen/_2sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:stateListAnimator="@animator/button_click_animator"
+                    android:textAllCaps="false"
+                    android:paddingHorizontal="@dimen/_20sdp" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/tvActivityChange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Ongoing Projects"
+            android:textColor="#101828"
+            android:textSize="@dimen/_13ssp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCollabRequests"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_20sdp"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_collab_progress_layout" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
