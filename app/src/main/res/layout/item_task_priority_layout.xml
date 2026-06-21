@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/_10sdp"
+    android:layout_marginVertical="@dimen/_6sdp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_15sdp"
+    app:cardElevation="@dimen/_4sdp"
+    app:cardUseCompatPadding="true"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/_15sdp">
+
+        <!-- Header: Priority & Menu -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvPriority"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/whitecardbackground"
+                android:backgroundTint="#FEE2E2"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="High Priority"
+                android:textColor="#991B1B"
+                android:textSize="@dimen/_9ssp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tvPriority"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:background="@drawable/whitecardbackground"
+                android:backgroundTint="@color/lightgreen"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="Fashion"
+                android:textColor="@color/green"
+                android:textSize="@dimen/_9ssp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/ivMenu"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/user"
+                app:tint="@color/grey" />
+        </RelativeLayout>
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvTaskTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:text="Summer Lifestyle Lookbook 2024"
+            android:textColor="@color/blackR"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold" />
+
+        <!-- Description -->
+        <TextView
+            android:id="@+id/tvTaskDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text="Describe your vision, goals, and what makes this collaboration unique..."
+            android:textColor="@color/assetgrey"
+            android:textSize="@dimen/_10ssp"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <!-- Skills Keyword and Chips -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="Skills:"
+            android:textColor="@color/blackR"
+            android:textSize="@dimen/_10ssp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/cgSkills"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_2sdp"
+            app:chipSpacingHorizontal="@dimen/_4sdp"
+            app:chipSpacingVertical="0dp">
+
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Photography"
+                app:chipBackgroundColor="#F3F4F6"
+                app:chipStrokeWidth="0dp"
+                android:textColor="#374151"
+                android:textSize="@dimen/_8ssp"
+                app:chipMinHeight="@dimen/_20sdp" />
+
+            <com.google.android.material.chip.Chip
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Editing"
+                app:chipBackgroundColor="#F3F4F6"
+                app:chipStrokeWidth="0dp"
+                android:textColor="#374151"
+                android:textSize="@dimen/_8ssp"
+                app:chipMinHeight="@dimen/_20sdp" />
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginVertical="@dimen/_12sdp"
+            android:background="#F2F4F7" />
+
+        <!-- Bottom Info: Timeline & Budget -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/llTimeline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/_14sdp"
+                    android:layout_height="@dimen/_14sdp"
+                    android:src="@drawable/timer"
+                    app:tint="@color/grey" />
+
+                <TextView
+                    android:id="@+id/tvTimeline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:text="2-3 Weeks"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/_10ssp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvBudget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:text="$ 500 - 1000"
+                android:textColor="@color/green"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- Progress Bar (Optional, keeping it if needed) -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/pbTaskProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:progress="75"
+            app:indicatorColor="@color/green"
+            app:trackColor="@color/lightgreen"
+            app:trackCornerRadius="@dimen/_4sdp"
+            app:trackThickness="@dimen/_4sdp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSendRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/buttonlayout"
+            android:layout_gravity="end"
+            android:text="Send Request"
+            android:textSize="@dimen/_11ssp"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:layout_margin="@dimen/_5sdp"
+            app:cornerRadius="@dimen/_10sdp"
+            app:elevation="@dimen/_3sdp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:stateListAnimator="@animator/button_click_animator"
+            android:textAllCaps="false"
+            android:paddingHorizontal="@dimen/_20sdp"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

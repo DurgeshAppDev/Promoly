@@ -45,21 +45,16 @@
                 android:textSize="@dimen/_16ssp"
                 android:textStyle="bold" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="@dimen/_32sdp"
-                android:layout_height="@dimen/_32sdp"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivProfileImageofAddTask"
+                android:layout_width="@dimen/_42sdp"
+                android:layout_height="@dimen/_42sdp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                app:cardCornerRadius="@dimen/_16sdp"
-                app:cardElevation="@dimen/_2sdp"
-                app:strokeWidth="0dp">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/profile_image" />
-            </com.google.android.material.card.MaterialCardView>
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_image"
+                app:shapeAppearanceOverlay="@style/CircleImageView"
+                android:elevation="@dimen/_2sdp" />
         </RelativeLayout>
 
         <!-- Form Container -->
