@@ -24,37 +24,17 @@
             android:gravity="center_vertical"
             android:padding="@dimen/_8sdp">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivProfileImageofTasks"
-                android:layout_width="@dimen/_45sdp"
-                android:layout_height="@dimen/_45sdp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile_image"
-                app:shapeAppearanceOverlay="@style/CircleImageView"
-                android:elevation="@dimen/_4sdp" />
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="@dimen/_10sdp"
-                android:text="Promoly"
-                android:textColor="@color/green"
-                android:textSize="@dimen/_18ssp"
+                android:text="Collaboration Tasks"
+                android:textColor="@color/blackR"
+                android:textSize="@dimen/_14ssp"
                 android:textStyle="bold" />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/btnNotificationTasks"
-                android:layout_width="@dimen/_45sdp"
-                android:layout_height="@dimen/_45sdp"
-                android:background="#F2F4F7"
-                android:padding="@dimen/_5sdp"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:scaleType="centerInside"
-                android:src="@drawable/bell"
-                android:elevation="@dimen/_4sdp"
-                android:stateListAnimator="@animator/button_click_animator"
-                app:shapeAppearanceOverlay="@style/CircleImageView" />
+
         </LinearLayout>
 
         <!-- Search Bar -->

@@ -1,7 +1,7 @@
 package com.durgesh.promoly.util
 
 object Constants {
-    const val COLLECTION_USERS = "users"
+    const val COLLECTION_USERS = "Users"
     const val COLLECTION_TASKS = "tasks"
     const val COLLECTION_COLLABS = "collabs"
     

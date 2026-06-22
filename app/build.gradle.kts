@@ -27,6 +27,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -35,6 +38,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.material)
 
     // Modern Google Sign-In (Credential Manager)
@@ -46,6 +51,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation("com.google.firebase:firebase-storage")
 
     // Glide Image Loader
     implementation("com.github.bumptech.glide:glide:4.16.0")

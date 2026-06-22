@@ -20,43 +20,26 @@
         android:paddingBottom="@dimen/_40sdp">
 
         <!-- Toolbar Area -->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/_15sdp"
-            android:paddingVertical="@dimen/_10sdp">
-
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
-                android:layout_centerVertical="true"
-                android:src="@drawable/user"
-                app:tint="@color/green" />
+            android:orientation="horizontal"
+            android:background="@color/lightgreen"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_8sdp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_15sdp"
-                android:layout_toEndOf="@id/btnBack"
-                android:text="New Collaboration"
-                android:textColor="@color/green"
-                android:textSize="@dimen/_16ssp"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:text="New Collabration Task"
+                android:textColor="@color/blackR"
+                android:textSize="@dimen/_14ssp"
                 android:textStyle="bold" />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivProfileImageofAddTask"
-                android:layout_width="@dimen/_42sdp"
-                android:layout_height="@dimen/_42sdp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile_image"
-                app:shapeAppearanceOverlay="@style/CircleImageView"
-                android:elevation="@dimen/_2sdp" />
-        </RelativeLayout>
 
+        </LinearLayout>
         <!-- Form Container -->
         <LinearLayout
             android:layout_width="match_parent"

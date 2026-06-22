@@ -171,25 +171,32 @@ class RegisterActivity : AppCompatActivity() {
 
 
     private fun saveUserToDatabase(userId: String, name: String, email: String) {
-        // 1. Initialize Firestore Instance
         val db = FirebaseFirestore.getInstance()
 
-        // 2. Map out your user payload
+        // Match the complete structural payload you expect to update later
         val userMap = HashMap<String, Any>()
         userMap["uid"] = userId
         userMap["name"] = name
         userMap["email"] = email
+        userMap["bio"] = ""
+        userMap["phone"] = ""
+        userMap["profileImageUrl"] = ""
+        userMap["createdAt"] = com.google.firebase.firestore.FieldValue.serverTimestamp()
 
-        // 3. Save to a "Users" collection using the unique userId as the Document ID
         db.collection(Constants.COLLECTION_USERS)
             .document(userId)
             .set(userMap)
             .addOnSuccessListener {
-                showToast("Registration Successful")
-                startActivity(Intent(this, LoginActivity::class.java))
+                showToast("Registration Successful!")
+
+                // FIX: Navigate directly to HomeActivity because they are already logged in!
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
                 finish()
             }
             .addOnFailureListener { e ->
+                Log.e("FIRESTORE_ERR", "Error setting document", e)
                 showToast("Firestore error: ${e.message}")
             }
     }

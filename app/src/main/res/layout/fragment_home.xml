@@ -23,30 +23,23 @@
             android:gravity="center_vertical"
             android:padding="@dimen/_8sdp">
 
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                app:cardCornerRadius="@dimen/_20sdp"
-                app:cardElevation="@dimen/_4sdp"
-                app:cardUseCompatPadding="true"
-                app:strokeWidth="0dp">
-
-                <ImageView
-                    android:id="@+id/ivProfileImageofHome"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/profile_image" />
-
-            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivProfileImageofHome"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_image"
+                app:shapeAppearanceOverlay="@style/CircleImageView"
+                android:elevation="@dimen/_4sdp" />
 
             <TextView
+                android:id="@+id/tvGreeting"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="@dimen/_10sdp"
-                android:text="Hello Durgesh"
-                android:textColor="#101828"
+                android:text="Hello creator"
+                android:textColor="@color/blackR"
                 android:textSize="@dimen/_14ssp"
                 android:textStyle="bold" />
 
@@ -68,8 +61,8 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_15sdp"
-            android:layout_marginVertical="@dimen/_10sdp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginVertical="@dimen/_5sdp"
             app:cardCornerRadius="@dimen/_12sdp"
             app:cardElevation="@dimen/_4sdp"
             app:cardUseCompatPadding="true"
@@ -78,8 +71,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/_10sdp">
+                android:layout_height="wrap_content">
 
                 <EditText
                     android:id="@+id/etSearchHome"
@@ -90,6 +82,7 @@
                     android:inputType="text"
                     android:padding="@dimen/_12sdp"
                     android:paddingEnd="@dimen/_40sdp"
+                    android:paddingRight="@dimen/_40sdp"
                     android:textColor="@color/blackR"
                     android:textSize="@dimen/_11ssp" />
 
@@ -98,6 +91,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignEnd="@id/etSearchHome"
+                    android:layout_marginEnd="@dimen/_8sdp"
                     android:layout_centerVertical="true"
                     android:background="@android:color/transparent"
                     android:contentDescription="Search"
@@ -120,8 +114,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/_10sdp"
-                android:paddingBottom="@dimen/_10sdp">
+                android:paddingHorizontal="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp">
 
                 <!-- Active Tasks Card -->
                 <com.google.android.material.card.MaterialCardView
@@ -344,10 +338,10 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCollabRequests"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_230sdp"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_height="@dimen/_400sdp"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingHorizontal="@dimen/_5sdp"
                 android:nestedScrollingEnabled="true"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_collab_request_layout" />

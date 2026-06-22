@@ -1,4 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="Base.Theme.Promoly" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">#006642</item>
         <item name="colorPrimaryVariant">#004d32</item>
@@ -10,7 +11,10 @@
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
+
     <style name="CircleImageView" parent="">
-        <item name="cornerSize">50%</item> </style>
+        <item name="cornerSize">50%</item>
+    </style>
+
     <style name="Theme.Promoly" parent="Base.Theme.Promoly" />
 </resources>

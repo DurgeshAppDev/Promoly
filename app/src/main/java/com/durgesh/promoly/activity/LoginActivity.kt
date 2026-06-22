@@ -61,6 +61,7 @@ class LoginActivity : AppCompatActivity() {
         textForgotPass = findViewById(R.id.loginforgotpass)
 
         // Email & Password Login Button Click
+        // Email & Password Login Button Click
         loginBtn.setOnClickListener {
             val email = loginUsername.text.toString().trim()
             val password = loginPassword.text.toString().trim()
@@ -80,9 +81,11 @@ class LoginActivity : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        showToast("Login Successful!")
-                        startActivity(Intent(this, HomeActivity::class.java))
-                        finish()
+                        val user = auth.currentUser
+                        if (user != null) {
+                            // Check if the user document exists in Firestore, or create/initialize it if missing
+                            checkAndInitializeUserData(user.uid, email)
+                        }
                     } else {
                         showToast("Authentication Failed: ${task.exception?.message}", Toast.LENGTH_LONG)
                     }
@@ -186,5 +189,41 @@ class LoginActivity : AppCompatActivity() {
             .addOnFailureListener { e ->
                 showToast("Firestore error: ${e.message}")
             }
+    }
+
+    private fun checkAndInitializeUserData(userId: String, email: String) {
+        val db = FirebaseFirestore.getInstance()
+        val userDocRef = db.collection(Constants.COLLECTION_USERS).document(userId)
+
+        userDocRef.get().addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                // User document already exists, proceed to Home
+                showToast("Login Successful!")
+                startActivity(Intent(this, HomeActivity::class.java))
+                finish()
+            } else {
+                // If for some reason the document wasn't created during registration, initialize it now
+                val userMap = HashMap<String, Any>()
+                userMap["uid"] = userId
+                userMap["name"] = email.substringBefore("@") // Default name fallback from email
+                userMap["email"] = email
+                userMap["bio"] = ""
+                userMap["phone"] = ""
+                userMap["profileImageUrl"] = ""
+                userMap["createdAt"] = com.google.firebase.firestore.FieldValue.serverTimestamp()
+
+                userDocRef.set(userMap)
+                    .addOnSuccessListener {
+                        showToast("Login Successful!")
+                        startActivity(Intent(this, HomeActivity::class.java))
+                        finish()
+                    }
+                    .addOnFailureListener { e ->
+                        showToast("Failed to initialize user document: ${e.message}")
+                    }
+            }
+        }.addOnFailureListener { e ->
+            showToast("Firestore check failed: ${e.message}")
+        }
     }
 }
