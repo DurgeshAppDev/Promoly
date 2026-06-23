@@ -152,9 +152,10 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvActiveTasksCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="12"
+                            android:text="0"
                             android:textSize="@dimen/_18ssp"
                             android:textColor="@color/blackR"
                             android:textStyle="bold" />
@@ -196,9 +197,10 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvActiveCollabsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="12"
+                            android:text="0"
                             android:textSize="@dimen/_18ssp"
                             android:textColor="@color/blackR"
                             android:textStyle="bold" />
@@ -243,9 +245,10 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tvCompletedCollabsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="12"
+                            android:text="0"
                             android:textSize="@dimen/_18ssp"
                             android:textColor="@color/white"
                             android:textStyle="bold" />
@@ -326,7 +329,7 @@
                     android:id="@+id/tvNewCollabs"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2 new"
+                    android:text="0 new"
                     android:paddingVertical="@dimen/_4sdp"
                     android:paddingHorizontal="@dimen/_12sdp"
                     android:textColor="@color/white"

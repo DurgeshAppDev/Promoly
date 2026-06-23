@@ -1,18 +1,27 @@
 package com.durgesh.promoly.adapter
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.durgesh.promoly.R
 import com.durgesh.promoly.model.ModelCollabRequest
 import com.durgesh.promoly.util.showToast
 
-class AdapterCollabRequest(private val list: List<ModelCollabRequest>) : RecyclerView.Adapter<AdapterCollabRequest.ViewHolder>() {
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseAuth
+import com.durgesh.promoly.util.Constants
+
+class AdapterCollabRequest(
+    private val list: MutableList<ModelCollabRequest>,
+    private val onActionComplete: () -> Unit
+) : RecyclerView.Adapter<AdapterCollabRequest.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -24,13 +33,67 @@ class AdapterCollabRequest(private val list: List<ModelCollabRequest>) : Recycle
         val item = list[position]
         holder.tvdescription.text = item.coDescription
         holder.tvname.text = item.coName
-        holder.image.setImageResource(item.coProfileImg)
+        
+        // Handle Image loading (Base64 or URL)
+        if (item.coProfileImg.isNotEmpty()) {
+            if (item.coProfileImg.startsWith("http")) {
+                Glide.with(holder.itemView.context).load(item.coProfileImg).placeholder(R.drawable.profile_image).into(holder.image)
+            } else {
+                try {
+                    val imageBytes = Base64.decode(item.coProfileImg, Base64.DEFAULT)
+                    val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                    holder.image.setImageBitmap(decodedImage)
+                } catch (e: Exception) {
+                    holder.image.setImageResource(R.drawable.profile_image)
+                }
+            }
+        } else {
+            holder.image.setImageResource(R.drawable.profile_image)
+        }
 
         holder.tvAccept.setOnClickListener {
-            holder.itemView.context.showToast("Accepted request of ${item.coName}")
+            updateRequestStatus(item.id, "Accepted", holder)
         }
         holder.tvDecline.setOnClickListener {
-            holder.itemView.context.showToast("Declined request of ${item.coName}")
+            updateRequestStatus(item.id, "Declined", holder)
+        }
+    }
+
+    private fun updateRequestStatus(requestId: String, newStatus: String, holder: ViewHolder) {
+        val db = FirebaseFirestore.getInstance()
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        holder.tvAccept.isEnabled = false
+        holder.tvDecline.isEnabled = false
+
+        // If accepted, we also want to attach receiver info for the Collabs screen
+        if (newStatus == "Accepted") {
+            db.collection(Constants.COLLECTION_USERS).document(currentUserId).get()
+                .addOnSuccessListener { userDoc ->
+                    val receiverName = userDoc.getString("name") ?: "User"
+                    val receiverImage = userDoc.getString("profileImageUrl") ?: ""
+
+                    val updates = hashMapOf(
+                        "status" to newStatus,
+                        "receiverName" to receiverName,
+                        "receiverImage" to receiverImage,
+                        "acceptedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
+                    )
+
+                    db.collection(Constants.COLLECTION_COLLABS).document(requestId)
+                        .update(updates as Map<String, Any>)
+                        .addOnSuccessListener {
+                            holder.itemView.context.showToast("Collaboration $newStatus!")
+                            onActionComplete()
+                        }
+                }
+        } else {
+            db.collection(Constants.COLLECTION_COLLABS).document(requestId)
+                .update("status", newStatus)
+                .addOnSuccessListener {
+                    holder.itemView.context.showToast("Request $newStatus")
+                    onActionComplete()
+                }
         }
     }
 

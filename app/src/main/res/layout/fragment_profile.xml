@@ -85,7 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_20sdp"
-                android:text="Durgesh"
+                android:text="Name"
                 android:textColor="@color/blackR"
                 android:textSize="@dimen/_20ssp"
                 android:textStyle="bold" />
@@ -126,9 +126,10 @@
                     android:orientation="vertical"
                     android:paddingVertical="@dimen/_12sdp">
                     <TextView
+                        android:id="@+id/tvProfileCollabsCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="24"
+                        android:text="0"
                         android:textColor="@color/green"
                         android:textSize="@dimen/_16ssp"
                         android:textStyle="bold" />
@@ -157,9 +158,10 @@
                     android:orientation="vertical"
                     android:paddingVertical="@dimen/_12sdp">
                     <TextView
+                        android:id="@+id/tvProfileFollowersCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="120k"
+                        android:text="0"
                         android:textColor="@color/green"
                         android:textSize="@dimen/_16ssp"
                         android:textStyle="bold" />
@@ -188,9 +190,10 @@
                     android:orientation="vertical"
                     android:paddingVertical="@dimen/_12sdp">
                     <TextView
+                        android:id="@+id/tvProfileTasksCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="85"
+                        android:text="0"
                         android:textColor="@color/green"
                         android:textSize="@dimen/_16ssp"
                         android:textStyle="bold" />

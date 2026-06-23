@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="@dimen/_4sdp"
+    android:layout_marginHorizontal="@dimen/_10sdp"
     android:layout_marginVertical="@dimen/_6sdp"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="@dimen/_15sdp"
@@ -14,64 +14,109 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/_12sdp">
+        android:padding="@dimen/_15sdp">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivProfileImagecollab"
-            android:layout_width="@dimen/_50sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:src="@drawable/profile_image"
-            android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/CircleImageView"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+        <!-- Project Title -->
         <TextView
-            android:id="@+id/tvCollabName"
-            android:layout_width="0dp"
+            android:id="@+id/tvProjectTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_12sdp"
-            android:text="Sarah (Designer)"
-            android:textColor="#101828"
+            android:text="UI/UX Redesign"
+            android:textColor="@color/blackR"
             android:textSize="@dimen/_14ssp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ivProfileImagecollab"
-            app:layout_constraintTop_toTopOf="@+id/ivProfileImagecollab" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Category Badge -->
         <TextView
-            android:id="@+id/tvProjectTitle"
-            android:layout_width="0dp"
+            android:id="@+id/tvCategory"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="UI/UX Redesign"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:background="@drawable/whitecardbackground"
+            android:backgroundTint="@color/lightgreen"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_2sdp"
+            android:text="Designer"
             android:textColor="@color/green"
+            android:textSize="@dimen/_9ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvProjectTitle" />
+
+        <!-- Dual Profiles Centered -->
+        <RelativeLayout
+            android:id="@+id/rlProfiles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCategory">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivProfile1"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_image"
+                app:shapeAppearanceOverlay="@style/CircleImageView"
+                app:strokeColor="@color/white"
+                app:strokeWidth="2dp" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivProfile2"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_marginStart="@dimen/_30sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/profile_image"
+                app:shapeAppearanceOverlay="@style/CircleImageView"
+                app:strokeColor="@color/white"
+                app:strokeWidth="2dp" />
+
+        </RelativeLayout>
+
+        <!-- Names below profiles -->
+        <TextView
+            android:id="@+id/tvCollabName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:text="Sarah &amp; You"
+            android:textColor="#101828"
             android:textSize="@dimen/_11ssp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/tvCollabName"
-            app:layout_constraintStart_toStartOf="@+id/tvCollabName"
-            app:layout_constraintTop_toBottomOf="@+id/tvCollabName" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rlProfiles" />
 
+        <!-- Task Status/Description -->
         <TextView
             android:id="@+id/tvCollabDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Designing the high-fidelity wireframes for the dashboard."
+            android:layout_marginTop="@dimen/_4sdp"
+            android:gravity="center"
+            android:text="Designing the high-fidelity wireframes"
             android:textColor="@color/grey"
             android:textSize="@dimen/_10ssp"
-            app:layout_constraintEnd_toEndOf="@+id/tvCollabName"
-            app:layout_constraintStart_toStartOf="@+id/tvCollabName"
-            app:layout_constraintTop_toBottomOf="@+id/tvProjectTitle" />
-
-        <LinearLayout
-            android:id="@+id/llProgress"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvCollabDescription">
+            app:layout_constraintTop_toBottomOf="@id/tvCollabName" />
+
+        <!-- Progress Indicator -->
+        <LinearLayout
+            android:id="@+id/llProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/tvCollabDescription">
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/projectProgressBar"

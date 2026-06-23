@@ -29,6 +29,9 @@ class ProfileFragment : Fragment() {
     private lateinit var ivProfileLarge: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvProfileBio: TextView
+    private lateinit var tvProfileCollabsCount: TextView
+    private lateinit var tvProfileTasksCount: TextView
+    private lateinit var tvProfileFollowersCount: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +46,9 @@ class ProfileFragment : Fragment() {
         ivProfileLarge = view.findViewById(R.id.ivProfileLarge)
         tvProfileName = view.findViewById(R.id.tvProfileName)
         tvProfileBio = view.findViewById(R.id.tvProfileBio)
+        tvProfileCollabsCount = view.findViewById(R.id.tvProfileCollabsCount)
+        tvProfileTasksCount = view.findViewById(R.id.tvProfileTasksCount)
+        tvProfileFollowersCount = view.findViewById(R.id.tvProfileFollowersCount)
 
         val personalInfo = view.findViewById<LinearLayout>(R.id.btnPersonalInfo)
         val notificationSettings = view.findViewById<LinearLayout>(R.id.btnNotificationSettings)
@@ -87,9 +93,11 @@ class ProfileFragment : Fragment() {
                     val name = document.getString("name") ?: "User"
                     val bio = document.getString("bio") ?: ""
                     val imageUrl = document.getString("profileImageUrl")
+                    val followers = document.getLong("followers") ?: 0L
 
                     tvProfileName.text = name
                     tvProfileBio.text = if (bio.isNullOrEmpty()) "Digital Creator & Brand Strategist." else bio
+                    tvProfileFollowersCount.text = if (followers >= 1000) "${followers/1000}k" else followers.toString()
 
                     if (!imageUrl.isNullOrEmpty()) {
                         if (imageUrl.startsWith("http")) {
@@ -111,6 +119,37 @@ class ProfileFragment : Fragment() {
             .addOnFailureListener { e ->
                 if (isAdded) {
                     showToast("Failed to load profile: ${e.message}")
+                }
+            }
+            
+        // Load counts
+        loadStatCounts(currentUserId)
+    }
+
+    private fun loadStatCounts(userId: String) {
+        // 1. Total Tasks count
+        db.collection(Constants.COLLECTION_TASKS)
+            .whereEqualTo("userId", userId)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (isAdded) {
+                    tvProfileTasksCount.text = documents.size().toString()
+                }
+            }
+
+        // 2. Total Completed Collabs count
+        db.collection(Constants.COLLECTION_COLLABS)
+            .whereEqualTo("status", "Completed")
+            .get()
+            .addOnSuccessListener { documents ->
+                if (isAdded) {
+                    var count = 0
+                    for (doc in documents) {
+                        if (doc.getString("senderId") == userId || doc.getString("receiverId") == userId) {
+                            count++
+                        }
+                    }
+                    tvProfileCollabsCount.text = count.toString()
                 }
             }
     }

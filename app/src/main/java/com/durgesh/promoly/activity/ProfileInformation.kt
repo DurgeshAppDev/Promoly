@@ -168,12 +168,19 @@ class ProfileInformation : AppCompatActivity() {
     private fun saveProfileInformation() {
         val currentUserId = auth.currentUser?.uid ?: return
 
+        val name = etFullName.text.toString().trim()
+        val email = etEmail.text.toString().trim()
+        val bio = etBio.text.toString().trim()
+        val phone = etPhone.text.toString().trim()
+
         val updatesMap = HashMap<String, Any>()
-        updatesMap["name"] = etFullName.text.toString().trim()
-        updatesMap["email"] = etEmail.text.toString().trim()
-        updatesMap["bio"] = etBio.text.toString().trim()
-        updatesMap["phone"] = etPhone.text.toString().trim()
+        updatesMap["name"] = name
+        updatesMap["email"] = email
+        updatesMap["bio"] = bio
+        updatesMap["phone"] = phone
         updatesMap["updatedAt"] = FieldValue.serverTimestamp()
+
+        val finalImageUrl = base64ImageString ?: uploadedImageUrl
 
         // If a new image was selected and encoded, save its Base64 string
         if (base64ImageString != null) {
@@ -181,16 +188,58 @@ class ProfileInformation : AppCompatActivity() {
         }
 
         showToast("Saving Profile Changes...")
+        btnSaveChanges.isEnabled = false
 
         db.collection(Constants.COLLECTION_USERS)
             .document(currentUserId)
             .update(updatesMap)
             .addOnSuccessListener {
-                showToast("Profile Saved Successfully!")
-                finish()
+                // Now update denormalized data and wait for completion before finishing
+                updateDenormalizedUserData(currentUserId, name, finalImageUrl) {
+                    showToast("Profile Updated Everywhere!")
+                    finish()
+                }
             }
             .addOnFailureListener { e ->
                 showToast("Error saving data: ${e.message}")
+                btnSaveChanges.isEnabled = true
+            }
+    }
+
+    private fun updateDenormalizedUserData(userId: String, newName: String, newImageUrl: String?, onComplete: () -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+
+        // Use separate tasks to track completion of both updates
+        val taskUpdate = db.collection(Constants.COLLECTION_TASKS)
+            .whereEqualTo("userId", userId)
+            .get()
+            .continueWithTask { task ->
+                val batch = db.batch()
+                for (doc in task.result.documents) {
+                    val taskUpdates = hashMapOf<String, Any>("userName" to newName)
+                    if (newImageUrl != null) taskUpdates["userProfileImage"] = newImageUrl
+                    batch.update(doc.reference, taskUpdates)
+                }
+                batch.commit()
+            }
+
+        val collabUpdate = db.collection(Constants.COLLECTION_COLLABS)
+            .whereEqualTo("senderId", userId)
+            .get()
+            .continueWithTask { task ->
+                val batch = db.batch()
+                for (doc in task.result.documents) {
+                    val collabUpdates = hashMapOf<String, Any>("senderName" to newName)
+                    if (newImageUrl != null) collabUpdates["senderImage"] = newImageUrl
+                    batch.update(doc.reference, collabUpdates)
+                }
+                batch.commit()
+            }
+
+        // Wait for both batches to finish
+        com.google.android.gms.tasks.Tasks.whenAllComplete(taskUpdate, collabUpdate)
+            .addOnCompleteListener {
+                onComplete()
             }
     }
 }

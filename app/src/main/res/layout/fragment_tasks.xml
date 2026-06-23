@@ -80,6 +80,54 @@
 
             </RelativeLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <!-- Task Filters -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:paddingHorizontal="@dimen/_15sdp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAllTasks"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_32sdp"
+                    android:backgroundTint="@color/lightgreen"
+                    android:text="All Tasks"
+                    android:textAllCaps="false"
+                    android:textColor="@color/green"
+                    android:textSize="@dimen/_10ssp"
+                    android:textStyle="bold"
+                    app:cornerRadius="@dimen/_16sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:stateListAnimator="@animator/button_click_animator" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMyTasks"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_32sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:backgroundTint="#F2F4F7"
+                    android:text="My Tasks"
+                    android:textAllCaps="false"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/_10ssp"
+                    app:cornerRadius="@dimen/_16sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:stateListAnimator="@animator/button_click_animator" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
 
     <!-- Scrollable Content -->

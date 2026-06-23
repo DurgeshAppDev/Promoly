@@ -120,6 +120,24 @@
                     android:paddingHorizontal="@dimen/_20sdp" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMyCollab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_32sdp"
+                    android:backgroundTint="#F2F4F7"
+                    android:text="My Collabs"
+                    android:textSize="@dimen/_11ssp"
+                    android:textColor="@color/assetgrey"
+                    android:textStyle="bold"
+                    android:layout_margin="@dimen/_5sdp"
+                    app:cornerRadius="@dimen/_10sdp"
+                    app:elevation="@dimen/_2sdp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:stateListAnimator="@animator/button_click_animator"
+                    android:textAllCaps="false"
+                    android:paddingHorizontal="@dimen/_20sdp" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnActiveCollab"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/_32sdp"

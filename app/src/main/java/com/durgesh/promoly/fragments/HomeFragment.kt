@@ -33,6 +33,13 @@ class HomeFragment : Fragment() {
 
     private lateinit var ivProfileImage: ImageView
     private lateinit var tvGreeting: TextView
+    private lateinit var tvNewCollabs: TextView
+    private lateinit var tvActiveTasksCount: TextView
+    private lateinit var tvActiveCollabsCount: TextView
+    private lateinit var tvCompletedCollabsCount: TextView
+    
+    private lateinit var collabAdapter: AdapterCollabRequest
+    private val collabList = mutableListOf<ModelCollabRequest>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,8 +51,12 @@ class HomeFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-         ivProfileImage = view.findViewById(R.id.ivProfileImageofHome)
+        ivProfileImage = view.findViewById(R.id.ivProfileImageofHome)
         tvGreeting = view.findViewById(R.id.tvGreeting)
+        tvNewCollabs = view.findViewById(R.id.tvNewCollabs)
+        tvActiveTasksCount = view.findViewById(R.id.tvActiveTasksCount)
+        tvActiveCollabsCount = view.findViewById(R.id.tvActiveCollabsCount)
+        tvCompletedCollabsCount = view.findViewById(R.id.tvCompletedCollabsCount)
         val searchEditText = view.findViewById<EditText>(R.id.etSearchHome)
         val searchButton = view.findViewById<ImageButton>(R.id.btnSearchHome)
         val rvCollabRequests = view.findViewById<RecyclerView>(R.id.rvCollabRequests)
@@ -68,17 +79,13 @@ class HomeFragment : Fragment() {
         rvTodaysTasks.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvTodaysTasks.adapter = AdapterTasks(tasksList)
 
-        // Dummy data for Collab Requests
-        val collabList = listOf(
-            ModelCollabRequest("1", R.drawable.profile_image, "Sarah (Designer)", "Wants to collaborate on UI Project"),
-            ModelCollabRequest("2", R.drawable.profile_image, "Alex (Marketing)", "Brand Campaign Pitch"),
-            ModelCollabRequest("3", R.drawable.profile_image, "John (Dev)", "E-commerce App Collab"),
-            ModelCollabRequest("4", R.drawable.profile_image, "Emma (Writer)", "Blog Content Strategy"),
-            ModelCollabRequest("5", R.drawable.profile_image, "Mike (Photo)", "Product Photoshoot Request")
-        )
-
+        // Setup Collab Requests RecyclerView
         rvCollabRequests.layoutManager = LinearLayoutManager(requireContext())
-        rvCollabRequests.adapter = AdapterCollabRequest(collabList)
+        collabAdapter = AdapterCollabRequest(collabList) {
+            // Callback when a request is accepted or declined
+            loadCollabRequests()
+        }
+        rvCollabRequests.adapter = collabAdapter
 
 
         searchButton.setOnClickListener {
@@ -136,8 +143,94 @@ class HomeFragment : Fragment() {
             }
     }
 
+    private fun loadCollabRequests() {
+        val currentUserId = auth.currentUser?.uid ?: return
+
+        db.collection(Constants.COLLECTION_COLLABS)
+            .whereEqualTo("receiverId", currentUserId)
+            .whereEqualTo("status", "Pending")
+            .get()
+            .addOnSuccessListener { documents ->
+                if (isAdded) {
+                    collabList.clear()
+                    for (doc in documents) {
+                        val request = ModelCollabRequest(
+                            id = doc.id,
+                            coProfileImg = doc.getString("senderImage") ?: "",
+                            coName = doc.getString("senderName") ?: "User",
+                            coDescription = "Collab on: ${doc.getString("taskTitle") ?: "Project"}",
+                            senderId = doc.getString("senderId") ?: "",
+                            taskId = doc.getString("taskId") ?: "",
+                            status = doc.getString("status") ?: "Pending"
+                        )
+                        collabList.add(request)
+                    }
+                    collabAdapter.notifyDataSetChanged()
+                    tvNewCollabs.text = "${collabList.size} new"
+                }
+            }
+            .addOnFailureListener { e ->
+                if (isAdded) {
+                    Log.e("HomeFragment", "Error loading collab requests", e)
+                }
+            }
+    }
+
+    private fun loadStatCounts() {
+        val currentUserId = auth.currentUser?.uid ?: return
+
+        // 1. My Tasks count
+        db.collection(Constants.COLLECTION_TASKS)
+            .whereEqualTo("userId", currentUserId)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (isAdded) {
+                    tvActiveTasksCount.text = documents.size().toString()
+                }
+            }
+
+        // 2. Active Collabs (Accepted)
+        // We need to check where status is Accepted and user is either sender or receiver
+        // Since Firestore doesn't support OR on different fields easily, we can query by status and filter locally
+        // OR we can run two queries. For simplicity in a small app, we can just fetch all accepted for the user if we have a way.
+        // Actually, we can just query where status == "Accepted" and then filter currentUserId in senderId or receiverId.
+        
+        db.collection(Constants.COLLECTION_COLLABS)
+            .whereEqualTo("status", "Accepted")
+            .get()
+            .addOnSuccessListener { documents ->
+                if (isAdded) {
+                    var count = 0
+                    for (doc in documents) {
+                        if (doc.getString("senderId") == currentUserId || doc.getString("receiverId") == currentUserId) {
+                            count++
+                        }
+                    }
+                    tvActiveCollabsCount.text = count.toString()
+                }
+            }
+
+        // 3. Completed Collabs (Growth)
+        db.collection(Constants.COLLECTION_COLLABS)
+            .whereEqualTo("status", "Completed")
+            .get()
+            .addOnSuccessListener { documents ->
+                if (isAdded) {
+                    var count = 0
+                    for (doc in documents) {
+                        if (doc.getString("senderId") == currentUserId || doc.getString("receiverId") == currentUserId) {
+                            count++
+                        }
+                    }
+                    tvCompletedCollabsCount.text = count.toString()
+                }
+            }
+    }
+
     override fun onResume() {
         super.onResume()
         loadUserProfileData()
+        loadCollabRequests()
+        loadStatCounts()
     }
 }
