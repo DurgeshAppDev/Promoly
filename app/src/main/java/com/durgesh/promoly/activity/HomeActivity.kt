@@ -10,6 +10,7 @@ import com.durgesh.promoly.fragments.CollabsFragment
 import com.durgesh.promoly.fragments.HomeFragment
 import com.durgesh.promoly.fragments.ProfileFragment
 import com.durgesh.promoly.fragments.TasksFragment
+import com.durgesh.promoly.util.FcmUtils
 import com.durgesh.promoly.util.replaceFragment
 import com.durgesh.promoly.util.showToast
 import com.google.android.material.bottomappbar.BottomAppBar
@@ -30,12 +31,12 @@ class HomeActivity : AppCompatActivity() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         fabCenter = findViewById(R.id.fabCenter)
 
-        bottomNavigationView.background = null
+        // Update FCM Token on start
+        FcmUtils.updateFcmToken()
 
-        bottomAppBar.setOnApplyWindowInsetsListener { view, insets ->
-            view.setPadding(view.paddingLeft, view.paddingTop, view.paddingRight, 0)
-            insets
-        }
+        // Ensure bottom bar doesn't add system padding
+        bottomAppBar.setOnApplyWindowInsetsListener { _, insets -> insets }
+        bottomNavigationView.background = null
 
         if (savedInstanceState == null) {
             supportFragmentManager.replaceFragment(R.id.fragment_container, HomeFragment())

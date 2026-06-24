@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundcolor"
+    android:fitsSystemWindows="true"
     android:fillViewport="true"
     android:clipToPadding="false"
     android:clipChildren="false"
@@ -16,7 +17,6 @@
         android:orientation="vertical"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:paddingTop="@dimen/_25sdp"
         android:paddingBottom="@dimen/_40sdp">
 
         <!-- Toolbar Area -->
@@ -368,9 +368,6 @@
                 android:textStyle="bold"
                 app:cornerRadius="@dimen/_12sdp"
                 app:elevation="@dimen/_4sdp"
-                app:icon="@drawable/ic_add"
-                app:iconGravity="textEnd"
-                app:iconSize="@dimen/_20sdp"
                 android:stateListAnimator="@animator/button_click_animator" />
 
             <TextView

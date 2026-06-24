@@ -15,6 +15,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import com.durgesh.promoly.R
 import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.FcmUtils
 import com.durgesh.promoly.util.showToast
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -151,11 +152,13 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     val isNewUser = task.result?.additionalUserInfo?.isNewUser ?: false
-                    if (user != null && isNewUser) {
+                    if (user != null) {
                         // Onboard fresh Google sign-ins into Firestore
                         saveUserToDatabase(user.uid, user.displayName ?: "Google User", user.email ?: "")
+                        FcmUtils.updateFcmToken()
                     } else if (user != null) {
                         showToast("Welcome back!")
+                        FcmUtils.updateFcmToken()
                         startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     }
@@ -199,6 +202,7 @@ class LoginActivity : AppCompatActivity() {
             if (document != null && document.exists()) {
                 // User document already exists, proceed to Home
                 showToast("Login Successful!")
+                FcmUtils.updateFcmToken()
                 startActivity(Intent(this, HomeActivity::class.java))
                 finish()
             } else {
@@ -215,6 +219,7 @@ class LoginActivity : AppCompatActivity() {
                 userDocRef.set(userMap)
                     .addOnSuccessListener {
                         showToast("Login Successful!")
+                        FcmUtils.updateFcmToken()
                         startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     }

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/backgroundcolor"
+    android:fitsSystemWindows="true"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:fillViewport="true"
@@ -15,8 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:clipChildren="false"
-        android:clipToPadding="false"
-        android:paddingTop="@dimen/_25sdp">
+        android:clipToPadding="false">
 
         <!-- Header -->
         <LinearLayout

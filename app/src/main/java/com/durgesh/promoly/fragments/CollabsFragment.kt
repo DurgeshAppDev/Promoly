@@ -13,6 +13,7 @@ import com.durgesh.promoly.model.ModelCollabProgress
 
 import android.util.Log
 import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.showToast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -48,7 +49,9 @@ class CollabsFragment : Fragment() {
         btnCompleted = view.findViewById(R.id.btnCompletedCollab)
 
         rvCollabProgress.layoutManager = LinearLayoutManager(requireContext())
-        adapter = AdapterCollabProgress(progressList)
+        adapter = AdapterCollabProgress(progressList) { collab ->
+            showUpdateProgressDialog(collab)
+        }
         rvCollabProgress.adapter = adapter
 
         setupFilterButtons()
@@ -93,6 +96,50 @@ class CollabsFragment : Fragment() {
         }
     }
 
+    private fun showUpdateProgressDialog(collab: ModelCollabProgress) {
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        
+        // Permission Check: Only participants can update
+        if (collab.senderId != currentUserId && collab.receiverId != currentUserId) {
+            showToast("You don't have permission to update this project")
+            return
+        }
+
+        val options = arrayOf("Starting (25%)", "Mid (50%)", "Just Ending (75%)", "Finished (100%)")
+        val progressValues = intArrayOf(25, 50, 75, 100)
+
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Update Project Progress")
+            .setItems(options) { _, which ->
+                val selectedProgress = progressValues[which]
+                updateCollabProgress(collab.id, selectedProgress)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun updateCollabProgress(collabId: String, newProgress: Int) {
+        val updates = hashMapOf<String, Any>(
+            "progress" to newProgress
+        )
+
+        if (newProgress == 100) {
+            updates["status"] = "Completed"
+        } else {
+            updates["status"] = "Running"
+        }
+
+        db.collection(Constants.COLLECTION_COLLABS).document(collabId)
+            .update(updates)
+            .addOnSuccessListener {
+                showToast("Progress updated successfully!")
+            }
+            .addOnFailureListener { e ->
+                Log.e("CollabsFragment", "Error updating progress", e)
+                showToast("Failed to update progress")
+            }
+    }
+
     private fun loadCollaborations() {
         var query: com.google.firebase.firestore.Query = db.collection(Constants.COLLECTION_COLLABS)
         
@@ -123,6 +170,11 @@ class CollabsFragment : Fragment() {
                         val status = doc.getString("status") ?: ""
                         
                         // Filtering logic
+                        if (currentFilter == "All") {
+                            // Only show Active/Running/Accepted in "All", hide "Completed"
+                            if (status == "Completed" || status == "Declined" || status == "Pending") continue
+                        }
+
                         if (currentFilter == "My Collabs") {
                             if (senderId != currentUserId && receiverId != currentUserId) continue
                         }
@@ -147,7 +199,9 @@ class CollabsFragment : Fragment() {
                             copDescription = "Status: $status",
                             copProjectTitle = doc.getString("taskTitle") ?: "Project",
                             copCategory = status,
-                            copProgress = doc.getLong("progress")?.toInt() ?: 0
+                            copProgress = doc.getLong("progress")?.toInt() ?: 0,
+                            senderId = senderId,
+                            receiverId = receiverId
                         )
                         progressList.add(progress)
                     } catch (ex: Exception) {

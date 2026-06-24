@@ -8,6 +8,7 @@
     android:fillViewport="true"
     android:clipToPadding="false"
     android:clipChildren="false"
+    android:fitsSystemWindows="true"
     tools:context=".activity.ProfileInformation">
 
     <LinearLayout
@@ -122,6 +123,7 @@
                 android:textColor="@color/blackR"
                 android:textSize="@dimen/_11ssp"
                 android:textStyle="bold"
+                android:fontFamily="@font/poppins"
                 android:layout_marginStart="@dimen/_5sdp" />
 
             <com.google.android.material.card.MaterialCardView
@@ -142,6 +144,7 @@
                     android:hint="Durgesh"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/_11ssp"
+                    android:fontFamily="@font/poppins"
                     android:singleLine="true" />
             </com.google.android.material.card.MaterialCardView>
 
@@ -154,6 +157,7 @@
                 android:textColor="@color/blackR"
                 android:textSize="@dimen/_11ssp"
                 android:textStyle="bold"
+                android:fontFamily="@font/poppins"
                 android:layout_marginStart="@dimen/_5sdp" />
 
             <com.google.android.material.card.MaterialCardView
@@ -187,6 +191,7 @@
                 android:textColor="@color/blackR"
                 android:textSize="@dimen/_11ssp"
                 android:textStyle="bold"
+                android:fontFamily="@font/poppins"
                 android:layout_marginStart="@dimen/_5sdp" />
 
             <com.google.android.material.card.MaterialCardView
@@ -219,6 +224,7 @@
                 android:textColor="@color/blackR"
                 android:textSize="@dimen/_11ssp"
                 android:textStyle="bold"
+                android:fontFamily="@font/poppins"
                 android:layout_marginStart="@dimen/_5sdp" />
 
             <com.google.android.material.card.MaterialCardView

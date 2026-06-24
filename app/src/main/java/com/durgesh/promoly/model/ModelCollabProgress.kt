@@ -8,5 +8,7 @@ data class ModelCollabProgress(
     val copDescription: String = "",
     val copProjectTitle: String = "",
     val copCategory: String = "",
-    val copProgress: Int = 0
+    val copProgress: Int = 0,
+    val senderId: String = "",
+    val receiverId: String = ""
 )

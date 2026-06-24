@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.firebase.messaging)
     implementation(libs.material)
 
     // Modern Google Sign-In (Credential Manager)
@@ -56,6 +57,9 @@ dependencies {
     // Glide Image Loader
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    // OkHttp for FCM Notifications
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
     // Responsive UI Dimensions
     implementation("com.intuit.sdp:sdp-android:1.1.1")

@@ -79,7 +79,8 @@
                 android:text="Category: Fashion"
                 android:textColor="@color/green"
                 android:textSize="@dimen/_8ssp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins" />
 
             <TextView
                 android:id="@+id/tvStatus"
@@ -119,7 +120,8 @@
             android:textColor="@color/assetgrey"
             android:textSize="@dimen/_9ssp"
             android:maxLines="2"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins" />
 
         <!-- Skills Section -->
         <TextView

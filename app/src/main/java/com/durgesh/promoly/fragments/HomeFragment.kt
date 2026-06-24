@@ -37,9 +37,15 @@ class HomeFragment : Fragment() {
     private lateinit var tvActiveTasksCount: TextView
     private lateinit var tvActiveCollabsCount: TextView
     private lateinit var tvCompletedCollabsCount: TextView
+    private lateinit var llEmptyCollabs: View
+    private lateinit var rvCollabRequests: RecyclerView
+    private lateinit var rvTodaysTasks: RecyclerView
     
     private lateinit var collabAdapter: AdapterCollabRequest
     private val collabList = mutableListOf<ModelCollabRequest>()
+    
+    private lateinit var taskAdapter: AdapterTasks
+    private val taskList = mutableListOf<ModelTasks>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,27 +63,21 @@ class HomeFragment : Fragment() {
         tvActiveTasksCount = view.findViewById(R.id.tvActiveTasksCount)
         tvActiveCollabsCount = view.findViewById(R.id.tvActiveCollabsCount)
         tvCompletedCollabsCount = view.findViewById(R.id.tvCompletedCollabsCount)
+        llEmptyCollabs = view.findViewById(R.id.llEmptyCollabs)
+        rvCollabRequests = view.findViewById(R.id.rvCollabRequests)
+        rvTodaysTasks = view.findViewById(R.id.rvTodaysTasks)
+        
         val searchEditText = view.findViewById<EditText>(R.id.etSearchHome)
         val searchButton = view.findViewById<ImageButton>(R.id.btnSearchHome)
-        val rvCollabRequests = view.findViewById<RecyclerView>(R.id.rvCollabRequests)
-        val rvTodaysTasks = view.findViewById<RecyclerView>(R.id.rvTodaysTasks)
 
         ivProfileImage.setOnClickListener {
-            val intent = Intent(requireContext(), ProfileFragment::class.java)
-            startActivity(intent)
+            val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigationView)
+            bottomNav?.selectedItemId = R.id.navigation_profile
         }
 
-        // Dummy data for Tasks
-        val tasksList = listOf(
-            ModelTasks("1", R.drawable.ic_tasks, "Post Review", "Review for XYZ Brand on Instagram", "Pending"),
-            ModelTasks("2", R.drawable.ic_tasks, "Video Editing", "Edit the collab video with Alex", "In Progress"),
-            ModelTasks("3", R.drawable.ic_tasks, "Campaign Pitch", "Submit pitch for New Winter Collection", "Completed"),
-            ModelTasks("4", R.drawable.ic_tasks, "Client Call", "Meeting with Brand Manager at 5 PM", "Scheduled"),
-            ModelTasks("5", R.drawable.ic_tasks, "Content Calendar", "Update next month's post schedule", "Pending")
-        )
-
         rvTodaysTasks.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        rvTodaysTasks.adapter = AdapterTasks(tasksList)
+        taskAdapter = AdapterTasks(taskList)
+        rvTodaysTasks.adapter = taskAdapter
 
         // Setup Collab Requests RecyclerView
         rvCollabRequests.layoutManager = LinearLayoutManager(requireContext())
@@ -167,6 +167,15 @@ class HomeFragment : Fragment() {
                     }
                     collabAdapter.notifyDataSetChanged()
                     tvNewCollabs.text = "${collabList.size} new"
+                    
+                    // Toggle empty state visibility
+                    if (collabList.isEmpty()) {
+                        llEmptyCollabs.visibility = View.VISIBLE
+                        rvCollabRequests.visibility = View.GONE
+                    } else {
+                        llEmptyCollabs.visibility = View.GONE
+                        rvCollabRequests.visibility = View.VISIBLE
+                    }
                 }
             }
             .addOnFailureListener { e ->
@@ -227,10 +236,79 @@ class HomeFragment : Fragment() {
             }
     }
 
+    private fun loadTodaysTasks() {
+        val currentUserId = auth.currentUser?.uid ?: return
+        
+        // 1. Fetch user's own active tasks
+        val ownTasksQuery = db.collection(Constants.COLLECTION_TASKS)
+            .whereEqualTo("userId", currentUserId)
+            .whereEqualTo("status", "Active")
+            .get()
+
+        // 2. Fetch user's active collaborations
+        val collabsQuery = db.collection(Constants.COLLECTION_COLLABS)
+            .whereIn("status", listOf("Accepted", "Running"))
+            .get()
+
+        com.google.android.gms.tasks.Tasks.whenAllComplete(ownTasksQuery, collabsQuery)
+            .addOnSuccessListener {
+                if (!isAdded) return@addOnSuccessListener
+                
+                taskList.clear()
+                
+                // Add own tasks
+                val ownDocs = ownTasksQuery.result?.documents ?: emptyList()
+                for (doc in ownDocs) {
+                    taskList.add(ModelTasks(
+                        id = doc.id,
+                        taskImage = doc.getString("userProfileImage") ?: "",
+                        taskTitle = doc.getString("projectTitle") ?: "Task",
+                        taskDescription = doc.getString("description") ?: "",
+                        taskStatus = "Active",
+                        type = "task"
+                    ))
+                }
+                
+                // Add collaborating tasks
+                val collabDocs = collabsQuery.result?.documents ?: emptyList()
+                for (doc in collabDocs) {
+                    val sId = doc.getString("senderId") ?: ""
+                    val rId = doc.getString("receiverId") ?: ""
+                    
+                    // Only add if I am a participant
+                    if (sId == currentUserId || rId == currentUserId) {
+                        val status = doc.getString("status") ?: "Running"
+                        
+                        // Decide which profile image to show (the partner's or the task's origin?)
+                        // User requested: "profile pics whose task is this selkf others created"
+                        // For a collab, we show the partner's pic? Or the sender's?
+                        // Let's show the partner's image to make it feel like a collaboration.
+                        val partnerImage = if (sId == currentUserId) {
+                            doc.getString("receiverImage") ?: ""
+                        } else {
+                            doc.getString("senderImage") ?: ""
+                        }
+
+                        taskList.add(ModelTasks(
+                            id = doc.id,
+                            taskImage = partnerImage,
+                            taskTitle = doc.getString("taskTitle") ?: "Collab",
+                            taskDescription = "Working with ${if (sId == currentUserId) doc.getString("receiverName") else doc.getString("senderName")}",
+                            taskStatus = status,
+                            type = "collab"
+                        ))
+                    }
+                }
+                
+                taskAdapter.notifyDataSetChanged()
+            }
+    }
+
     override fun onResume() {
         super.onResume()
         loadUserProfileData()
         loadCollabRequests()
         loadStatCounts()
+        loadTodaysTasks()
     }
 }

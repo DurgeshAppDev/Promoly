@@ -8,8 +8,18 @@
         <item name="colorSecondaryVariant">@color/green</item>
         <item name="colorOnSecondary">@color/white</item>
         <item name="android:statusBarColor">#FFFFFF</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
+
+        <!-- Main Font -->
+        <item name="android:fontFamily">@font/inter</item>
+        <item name="fontFamily">@font/inter</item>
+    </style>
+
+    <!-- Sub Font Style -->
+    <style name="TextAppearance.Promoly.Poppins" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
     </style>
 
     <style name="CircleImageView" parent="">

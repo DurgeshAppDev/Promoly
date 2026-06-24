@@ -7,6 +7,7 @@
     android:background="@drawable/backgroundcolor"
     android:fillViewport="true"
     android:clipToPadding="false"
+    android:fitsSystemWindows="true"
     android:clipChildren="false"
     tools:context=".fragments.ProfileFragment">
 
@@ -16,7 +17,6 @@
         android:orientation="vertical"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:paddingTop="@dimen/_25sdp"
         android:paddingBottom="@dimen/_20sdp">
 
         <!-- Toolbar Area -->
@@ -97,7 +97,8 @@
                 android:layout_marginTop="@dimen/_2sdp"
                 android:text="Digital Creator &amp; Brand Strategist."
                 android:textColor="@color/grey"
-                android:textSize="@dimen/_11ssp" />
+                android:textSize="@dimen/_11ssp"
+                android:fontFamily="@font/poppins" />
         </LinearLayout>
 
         <!-- Stats Section -->
@@ -138,7 +139,8 @@
                         android:layout_height="wrap_content"
                         android:text="Collabs"
                         android:textColor="@color/grey"
-                        android:textSize="@dimen/_9ssp" />
+                        android:textSize="@dimen/_9ssp"
+                        android:fontFamily="@font/poppins" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -170,7 +172,8 @@
                         android:layout_height="wrap_content"
                         android:text="Followers"
                         android:textColor="@color/grey"
-                        android:textSize="@dimen/_9ssp" />
+                        android:textSize="@dimen/_9ssp"
+                        android:fontFamily="@font/poppins" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -203,7 +206,8 @@
                         android:text="Tasks Done"
                         android:gravity="center"
                         android:textColor="@color/grey"
-                        android:textSize="@dimen/_9ssp" />
+                        android:textSize="@dimen/_9ssp"
+                        android:fontFamily="@font/poppins" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

@@ -16,6 +16,7 @@ import com.durgesh.promoly.R
 import com.durgesh.promoly.activity.LoginActivity
 import com.durgesh.promoly.activity.ProfileInformation
 import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.FcmUtils
 import com.durgesh.promoly.util.showToast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -72,6 +73,7 @@ class ProfileFragment : Fragment() {
 
         logoutButton.setOnClickListener {
             Log.d("logout_button","Logout button was clicked")
+            FcmUtils.deleteFcmToken()
             auth.signOut()
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

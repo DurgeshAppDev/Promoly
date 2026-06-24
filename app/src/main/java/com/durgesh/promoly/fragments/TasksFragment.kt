@@ -13,6 +13,7 @@ import com.durgesh.promoly.R
 import com.durgesh.promoly.adapter.AdapterTasksPriority
 import com.durgesh.promoly.model.ModelTaskPriority
 import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.FcmNotificationSender
 import com.durgesh.promoly.util.showToast
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
@@ -203,6 +204,12 @@ class TasksFragment : Fragment() {
                             .add(requestMap)
                             .addOnSuccessListener {
                                 showToast("Collaboration request sent!")
+                                // Trigger notification to task owner
+                                FcmNotificationSender.sendNotification(
+                                    receiverId = task.userId,
+                                    title = "New Collaboration Request",
+                                    message = "$senderName wants to collaborate on \"${task.title}\""
+                                )
                             }
                             .addOnFailureListener { e ->
                                 Log.e("TasksFragment", "Error sending request", e)

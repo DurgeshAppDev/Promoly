@@ -13,7 +13,10 @@ import com.durgesh.promoly.R
 import com.durgesh.promoly.model.ModelCollabProgress
 import com.google.android.material.progressindicator.LinearProgressIndicator
 
-class AdapterCollabProgress(private val list: List<ModelCollabProgress>) : RecyclerView.Adapter<AdapterCollabProgress.ViewHolder>() {
+class AdapterCollabProgress(
+    private val list: List<ModelCollabProgress>,
+    private val onCollabClick: (ModelCollabProgress) -> Unit
+) : RecyclerView.Adapter<AdapterCollabProgress.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -36,6 +39,10 @@ class AdapterCollabProgress(private val list: List<ModelCollabProgress>) : Recyc
         // Handling progress
         holder.tvProgressPercent.text = "${item.copProgress}%"
         holder.progressBar.progress = item.copProgress
+
+        holder.itemView.setOnClickListener {
+            onCollabClick(item)
+        }
     }
 
     private fun loadImage(imageView: ImageView, imageData: String) {

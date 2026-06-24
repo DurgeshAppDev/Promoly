@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@drawable/backgroundcolor"
     android:fillViewport="true"
     tools:context=".fragments.HomeFragment">
@@ -12,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="@dimen/_25sdp">
+      >
 
         <!-- Header -->
         <LinearLayout
@@ -84,7 +85,8 @@
                     android:paddingEnd="@dimen/_40sdp"
                     android:paddingRight="@dimen/_40sdp"
                     android:textColor="@color/blackR"
-                    android:textSize="@dimen/_11ssp" />
+                    android:textSize="@dimen/_11ssp"
+                    android:fontFamily="@font/poppins" />
 
                 <ImageButton
                     android:id="@+id/btnSearchHome"
@@ -149,7 +151,8 @@
                             android:text="Tasks"
                             android:textSize="@dimen/_12ssp"
                             android:textColor="@color/grey"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:fontFamily="@font/poppins" />
 
                         <TextView
                             android:id="@+id/tvActiveTasksCount"
@@ -194,7 +197,8 @@
                             android:text="Collabs"
                             android:textSize="@dimen/_12ssp"
                             android:textColor="@color/grey"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:fontFamily="@font/poppins" />
 
                         <TextView
                             android:id="@+id/tvActiveCollabsCount"
@@ -242,7 +246,8 @@
                             android:textSize="@dimen/_12ssp"
                             android:textColor="@color/white"
                             android:alpha="0.8"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:fontFamily="@font/poppins" />
 
                         <TextView
                             android:id="@+id/tvCompletedCollabsCount"
@@ -262,7 +267,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -295,11 +299,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:clipToPadding="false"
-                android:paddingHorizontal="@dimen/_8sdp"
                 android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="@dimen/_8sdp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_campaign_layout" />
+
+
+
         </LinearLayout>
 
         <!-- Collab Requests Section -->
@@ -341,13 +349,40 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCollabRequests"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_400sdp"
+                android:layout_height="@dimen/_250sdp"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:clipToPadding="false"
                 android:paddingHorizontal="@dimen/_5sdp"
                 android:nestedScrollingEnabled="true"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_collab_request_layout" />
+
+            <!-- Empty State Placeholder -->
+            <LinearLayout
+                android:id="@+id/llEmptyCollabs"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_200sdp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:alpha="0.4"
+                    android:src="@drawable/ic_collab"
+                    app:tint="@color/grey" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:text="No new collaboration requests"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/_11ssp"
+                    android:fontFamily="@font/poppins"
+                    android:alpha="0.6" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -377,6 +412,7 @@
                     android:alpha="0.8"
                     android:textSize="@dimen/_10ssp"
                     android:textStyle="bold"
+                    android:fontFamily="@font/poppins"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

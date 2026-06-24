@@ -1,15 +1,18 @@
 package com.durgesh.promoly.adapter
 
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.durgesh.promoly.R
 import com.durgesh.promoly.model.ModelTasks
 
-class AdapterTasks(val list: List<ModelTasks>): RecyclerView.Adapter<AdapterTasks.ViewHolder>() {
+class AdapterTasks(private val list: List<ModelTasks>): RecyclerView.Adapter<AdapterTasks.ViewHolder>() {
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -19,10 +22,37 @@ class AdapterTasks(val list: List<ModelTasks>): RecyclerView.Adapter<AdapterTask
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = list[position]
-        holder.image.setImageResource(item.taskImage)
+        
         holder.tvTitle.text = item.taskTitle
         holder.tvDescription.text = item.taskDescription
         holder.tvStatus.text = item.taskStatus
+
+        // Handle Image loading (Base64 or URL)
+        if (item.taskImage.isNotEmpty()) {
+            if (item.taskImage.startsWith("http")) {
+                Glide.with(holder.itemView.context)
+                    .load(item.taskImage)
+                    .placeholder(R.drawable.profile_image)
+                    .into(holder.image)
+            } else {
+                try {
+                    val imageBytes = Base64.decode(item.taskImage, Base64.DEFAULT)
+                    val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                    holder.image.setImageBitmap(decodedImage)
+                } catch (e: Exception) {
+                    holder.image.setImageResource(R.drawable.profile_image)
+                }
+            }
+        } else {
+            holder.image.setImageResource(R.drawable.profile_image)
+        }
+        
+        // Status color coding
+        if (item.taskStatus == "Active" || item.taskStatus == "Running" || item.taskStatus == "Accepted") {
+            holder.tvStatus.setTextColor(holder.itemView.context.getColor(R.color.green))
+        } else {
+            holder.tvStatus.setTextColor(holder.itemView.context.getColor(R.color.grey))
+        }
     }
 
     override fun getItemCount(): Int {
