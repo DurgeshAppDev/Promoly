@@ -80,8 +80,6 @@ class TasksFragment : Fragment() {
             }
         }
 
-        loadTasksFromFirestore()
-
         return view
     }
 
@@ -203,13 +201,18 @@ class TasksFragment : Fragment() {
                         db.collection(Constants.COLLECTION_COLLABS)
                             .add(requestMap)
                             .addOnSuccessListener {
-                                showToast("Collaboration request sent!")
-                                // Trigger notification to task owner
-                                FcmNotificationSender.sendNotification(
-                                    receiverId = task.userId,
-                                    title = "New Collaboration Request",
-                                    message = "$senderName wants to collaborate on \"${task.title}\""
-                                )
+                                if (isAdded) {
+                                    showToast("Collaboration request sent!")
+                                    // Trigger notification to task owner
+                                    context?.let { ctx ->
+                                        FcmNotificationSender.sendNotification(
+                                            context = ctx,
+                                            receiverId = task.userId,
+                                            title = "New Collaboration Request",
+                                            message = "$senderName wants to collaborate on \"${task.title}\""
+                                        )
+                                    }
+                                }
                             }
                             .addOnFailureListener { e ->
                                 Log.e("TasksFragment", "Error sending request", e)

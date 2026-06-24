@@ -26,9 +26,23 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
+        Log.d("FCM", "From: ${remoteMessage.from}")
 
+        // Check if message contains a notification payload.
         remoteMessage.notification?.let {
+            Log.d("FCM", "Message Notification Body: ${it.body}")
             showNotification(it.title ?: "New Notification", it.body ?: "")
+        }
+
+        // Also check if message contains a data payload.
+        if (remoteMessage.data.isNotEmpty()) {
+            Log.d("FCM", "Message data payload: " + remoteMessage.data)
+            // If there's data but no notification, we might still want to show one
+            if (remoteMessage.notification == null) {
+                val title = remoteMessage.data["title"] ?: "New Update"
+                val body = remoteMessage.data["message"] ?: "Check the app for details"
+                showNotification(title, body)
+            }
         }
     }
 

@@ -5,7 +5,6 @@ plugins {
 
 android {
     namespace = "com.durgesh.promoly"
-    // Cleaned up the SDK syntax for stability
     compileSdk = 36
 
     defaultConfig {
@@ -15,12 +14,23 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        multiDexEnabled = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false // standard syntax to disable optimization/proguard
+            // Enables code shrinking, obfuscation, and optimization
+            isMinifyEnabled = true
+
+            // Enables resource shrinking (removes unused images/layouts)
+            isShrinkResources = true
+
+            // Tells R8 which rules files to use
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -30,17 +40,23 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/DEPENDENCIES"
+            excludes += "/META-INF/INDEX.LIST"
+        }
+    }
 }
 
 dependencies {
-    // AndroidX & UI Essentials
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    implementation(libs.firebase.messaging)
     implementation(libs.material)
 
     // Modern Google Sign-In (Credential Manager)
@@ -49,17 +65,27 @@ dependencies {
     implementation(libs.googleid)
 
     // Firebase (Using Bill of Materials BOM for uniform versions)
-    implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.15.0"))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.messaging)
     implementation("com.google.firebase:firebase-storage")
+
+    // Fix for Firestore gRPC crash
+    implementation("io.grpc:grpc-android:1.82.1")
+    implementation("io.grpc:grpc-okhttp:1.82.1")
+    implementation("io.grpc:grpc-stub:1.82.1")
+    implementation("io.grpc:grpc-protobuf-lite:1.82.1")
 
     // Glide Image Loader
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
     // OkHttp for FCM Notifications
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation(libs.okhttp)
+    
+    // Google Auth for FCM V1
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.48.0")
 
     // Responsive UI Dimensions
     implementation("com.intuit.sdp:sdp-android:1.1.1")
