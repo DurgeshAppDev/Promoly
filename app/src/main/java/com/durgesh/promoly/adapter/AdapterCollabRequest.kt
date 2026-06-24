@@ -17,6 +17,7 @@ import com.durgesh.promoly.util.showToast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.auth.FirebaseAuth
 import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.FcmNotificationSender
 
 class AdapterCollabRequest(
     private val list: MutableList<ModelCollabRequest>,
@@ -52,14 +53,14 @@ class AdapterCollabRequest(
         }
 
         holder.tvAccept.setOnClickListener {
-            updateRequestStatus(item.id, "Accepted", holder)
+            updateRequestStatus(item.id, "Accepted", holder, item)
         }
         holder.tvDecline.setOnClickListener {
-            updateRequestStatus(item.id, "Declined", holder)
+            updateRequestStatus(item.id, "Declined", holder, item)
         }
     }
 
-    private fun updateRequestStatus(requestId: String, newStatus: String, holder: ViewHolder) {
+    private fun updateRequestStatus(requestId: String, newStatus: String, holder: ViewHolder, item: ModelCollabRequest) {
         val db = FirebaseFirestore.getInstance()
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
@@ -83,7 +84,17 @@ class AdapterCollabRequest(
                     db.collection(Constants.COLLECTION_COLLABS).document(requestId)
                         .update(updates as Map<String, Any>)
                         .addOnSuccessListener {
-                            holder.itemView.context.showToast("Collaboration $newStatus!")
+                            val context = holder.itemView.context
+                            context.showToast("Collaboration $newStatus!")
+                            
+                            // Send notification to the requester (senderId)
+                            FcmNotificationSender.sendNotification(
+                                context = context,
+                                receiverId = item.senderId,
+                                title = "Collaboration Accepted!",
+                                message = "$receiverName has accepted your collaboration request for \"${item.coDescription}\""
+                            )
+
                             onActionComplete()
                         }
                 }
