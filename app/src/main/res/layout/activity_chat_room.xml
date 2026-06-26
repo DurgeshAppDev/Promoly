@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/backgroundcolor"
+    tools:context=".activity.ChatRoomActivity">
+
+    <LinearLayout
+        android:id="@+id/llChatHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/lightgreen"
+        android:gravity="center_vertical"
+        android:padding="@dimen/_8sdp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnBackChatRoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:src="@drawable/arrow_back"
+            android:padding="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            app:tint="@color/blackR"/>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfileImageChatRoom"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="@dimen/_45sdp"
+            android:scaleType="centerInside"
+            android:padding="@dimen/_8sdp"
+            android:background="#F2F4F7"
+            android:src="@drawable/user"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            android:elevation="@dimen/_4sdp" />
+
+        <TextView
+            android:id="@+id/tvUserNameChatRoom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:text="Name"
+            android:textColor="@color/blackR"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/three_dots"
+            android:padding="@dimen/_2sdp"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="More options"
+            app:tint="@color/blackR" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChatMessages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingHorizontal="@dimen/_8sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/llChatHeader"
+        app:layout_constraintBottom_toTopOf="@id/llChatInput"
+        tools:listitem="@layout/sender_chat_layout" />
+
+    <LinearLayout
+        android:id="@+id/llChatInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="@dimen/_8sdp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <EditText
+            android:id="@+id/etMessageChatRoom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Type a message..."
+            android:padding="@dimen/_10sdp"
+            android:background="@drawable/bacground_chat_input"
+            android:maxLines="4"
+            android:inputType="textMultiLine"
+            android:textSize="@dimen/_12ssp" />
+
+        <ImageButton
+            android:id="@+id/btnSendMessage"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:src="@drawable/send"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/green"
+            android:contentDescription="Send message" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
