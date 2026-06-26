@@ -36,7 +36,17 @@ class AdapterTasksPriority(
         
         // User Info
         holder.tvUserName.text = item.userName
-        
+
+        val onProfileClick = View.OnClickListener {
+            val context = holder.itemView.context
+            val intent = android.content.Intent(context, com.durgesh.promoly.activity.ViewProfile::class.java)
+            intent.putExtra("userId", item.userId)
+            context.startActivity(intent)
+        }
+
+        holder.tvUserName.setOnClickListener(onProfileClick)
+        holder.ivProfileImage.setOnClickListener(onProfileClick)
+
         // Hide/Show Send Request button: only show if it's NOT the current user's task
         if (item.userId == currentUserId) {
             holder.btnSendRequest.visibility = View.GONE

@@ -1,9 +1,11 @@
 package com.durgesh.promoly.fragments
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
@@ -21,11 +23,15 @@ import com.durgesh.promoly.util.showToast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Log
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 
 class ProfileFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private lateinit var progressDialog: ProgressDialog
 
     private lateinit var ivProfileLarge: ImageView
     private lateinit var tvProfileName: TextView
@@ -50,6 +56,9 @@ class ProfileFragment : Fragment() {
         tvProfileCollabsCount = view.findViewById(R.id.tvProfileCollabsCount)
         tvProfileTasksCount = view.findViewById(R.id.tvProfileTasksCount)
         tvProfileFollowersCount = view.findViewById(R.id.tvProfileFollowersCount)
+        progressDialog = ProgressDialog(requireContext())
+        progressDialog.setMessage("Loading profile...")
+        progressDialog.setCancelable(false)
 
         val personalInfo = view.findViewById<LinearLayout>(R.id.btnPersonalInfo)
         val notificationSettings = view.findViewById<LinearLayout>(R.id.btnNotificationSettings)
@@ -85,6 +94,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun loadUserProfileData() {
+        progressDialog.show()
         val currentUserId = auth.currentUser?.uid ?: return
 
         db.collection(Constants.COLLECTION_USERS)
@@ -104,13 +114,40 @@ class ProfileFragment : Fragment() {
                     if (!imageUrl.isNullOrEmpty()) {
                         if (imageUrl.startsWith("http")) {
                             // Legacy URL fallback
-                            Glide.with(this).load(imageUrl).into(ivProfileLarge)
+                            Glide.with(this)
+                                .load(imageUrl)
+                                .listener(object : RequestListener<Drawable> {
+
+
+                                    override fun onLoadFailed(
+                                        e: GlideException?,
+                                        model: Any?,
+                                        target: com.bumptech.glide.request.target.Target<Drawable?>,
+                                        isFirstResource: Boolean
+                                    ): Boolean {
+                                        progressDialog.dismiss()
+                                        return false
+                                    }
+
+                                    override fun onResourceReady(
+                                        resource: Drawable,
+                                        model: Any,
+                                        target: com.bumptech.glide.request.target.Target<Drawable?>?,
+                                        dataSource: DataSource,
+                                        isFirstResource: Boolean
+                                    ): Boolean {
+                                        progressDialog.dismiss()
+                                        return false
+                                    }
+                                })
+                                .into(ivProfileLarge)
                         } else {
                             // Decode and load Base64 string
                             try {
                                 val imageBytes = Base64.decode(imageUrl, Base64.DEFAULT)
                                 val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                                 ivProfileLarge.setImageBitmap(decodedImage)
+                                progressDialog.dismiss()
                             } catch (e: Exception) {
                                 Log.e("ProfileFragment", "Error decoding base64 image", e)
                             }

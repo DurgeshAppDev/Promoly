@@ -12,8 +12,7 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="80dp"
-        android:fitsSystemWindows="true"/>
+        android:layout_marginBottom="80dp" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
@@ -47,9 +46,10 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCenter"
-        android:layout_width="51dp"
-        android:layout_height="53dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:src="@drawable/ic_add"
+        app:fabSize="normal"
         app:layout_anchor="@id/bottomAppBar"
         app:layout_anchorGravity="center"
         app:tint="@color/white"/>

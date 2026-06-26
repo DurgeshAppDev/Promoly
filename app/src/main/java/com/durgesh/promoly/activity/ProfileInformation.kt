@@ -9,7 +9,10 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide // Optional: Highly recommended for loading URLs into ImageViews
 import com.durgesh.promoly.R
 import com.durgesh.promoly.util.Constants
@@ -85,7 +88,14 @@ class ProfileInformation : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_profile_information)
+        
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainProfileInfo)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(v.paddingLeft, systemBars.top, v.paddingRight, v.paddingBottom)
+            insets
+        }
 
         // Initialize Firebase instances
         auth = FirebaseAuth.getInstance()

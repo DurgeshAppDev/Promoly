@@ -1,5 +1,6 @@
 package com.durgesh.promoly.adapter
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.durgesh.promoly.R
+import com.durgesh.promoly.activity.ViewProfile
 import com.durgesh.promoly.model.ModelTasks
 
 class AdapterTasks(private val list: List<ModelTasks>): RecyclerView.Adapter<AdapterTasks.ViewHolder>() {
@@ -26,6 +28,15 @@ class AdapterTasks(private val list: List<ModelTasks>): RecyclerView.Adapter<Ada
         holder.tvTitle.text = item.taskTitle
         holder.tvDescription.text = item.taskDescription
         holder.tvStatus.text = item.taskStatus
+
+        holder.image.setOnClickListener {
+            if (item.userId.isNotEmpty()) {
+                val context = holder.itemView.context
+                val intent = Intent(context, ViewProfile::class.java)
+                intent.putExtra("userId", item.userId)
+                context.startActivity(intent)
+            }
+        }
 
         // Handle Image loading (Base64 or URL)
         if (item.taskImage.isNotEmpty()) {

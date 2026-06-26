@@ -52,11 +52,6 @@ class ViewProfile : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_view_profile)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
         db = FirebaseFirestore.getInstance()
         profileUserId = intent.getStringExtra("userId") ?: FirebaseAuth.getInstance().currentUser?.uid

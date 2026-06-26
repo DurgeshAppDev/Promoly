@@ -35,6 +35,16 @@ class AdapterCollabRequest(
         holder.tvdescription.text = item.coDescription
         holder.tvname.text = item.coName
         
+        val onProfileClick = View.OnClickListener {
+            val context = holder.itemView.context
+            val intent = android.content.Intent(context, com.durgesh.promoly.activity.ViewProfile::class.java)
+            intent.putExtra("userId", item.senderId)
+            context.startActivity(intent)
+        }
+        
+        holder.tvname.setOnClickListener(onProfileClick)
+        holder.image.setOnClickListener(onProfileClick)
+        
         // Handle Image loading (Base64 or URL)
         if (item.coProfileImg.isNotEmpty()) {
             if (item.coProfileImg.startsWith("http")) {

@@ -9,15 +9,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.durgesh.promoly.R
+import com.durgesh.promoly.activity.SearchUserActivity
 import com.durgesh.promoly.adapter.AdapterCollabRequest
 import com.durgesh.promoly.adapter.AdapterTasks
 import com.durgesh.promoly.model.ModelCollabRequest
@@ -67,12 +65,15 @@ class HomeFragment : Fragment() {
         rvCollabRequests = view.findViewById(R.id.rvCollabRequests)
         rvTodaysTasks = view.findViewById(R.id.rvTodaysTasks)
         
-        val searchEditText = view.findViewById<EditText>(R.id.etSearchHome)
-        val searchButton = view.findViewById<ImageButton>(R.id.btnSearchHome)
+        val cvSearch = view.findViewById<View>(R.id.cvSearchHome)
 
         ivProfileImage.setOnClickListener {
             val bottomNav = requireActivity().findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigationView)
             bottomNav?.selectedItemId = R.id.navigation_profile
+        }
+
+        cvSearch.setOnClickListener {
+            startActivity(Intent(requireContext(), SearchUserActivity::class.java))
         }
 
         rvTodaysTasks.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -87,25 +88,15 @@ class HomeFragment : Fragment() {
         }
         rvCollabRequests.adapter = collabAdapter
 
-
-        searchButton.setOnClickListener {
-            val searchText = searchEditText.text.toString()
-            if (searchText.isNotEmpty()) {
-                FirebaseFirestore.getInstance().collection(Constants.COLLECTION_USERS)
-                    .whereGreaterThanOrEqualTo("username", searchText)
-                    .whereLessThanOrEqualTo("username", searchText + "\uf8ff")
-                    .get()
-                    .addOnSuccessListener { documents ->
-                        // Update your adapter with documents.toObjects(User::class.java)
-                    }
-                    .addOnFailureListener { e ->
-                        showToast("Error: ${e.message}")
-                    }
-            }
-        }
+        // Initial data load
+        loadUserProfileData()
+        loadCollabRequests()
+        loadStatCounts()
+        loadTodaysTasks()
 
         return view
     }
+
     private fun loadUserProfileData() {
         val currentUserId = auth.currentUser?.uid ?: return
 
@@ -265,7 +256,8 @@ class HomeFragment : Fragment() {
                         taskTitle = doc.getString("projectTitle") ?: "Task",
                         taskDescription = doc.getString("description") ?: "",
                         taskStatus = "Active",
-                        type = "task"
+                        type = "task",
+                        userId = currentUserId
                     ))
                 }
                 
@@ -279,10 +271,8 @@ class HomeFragment : Fragment() {
                     if (sId == currentUserId || rId == currentUserId) {
                         val status = doc.getString("status") ?: "Running"
                         
-                        // Decide which profile image to show (the partner's or the task's origin?)
-                        // User requested: "profile pics whose task is this selkf others created"
-                        // For a collab, we show the partner's pic? Or the sender's?
-                        // Let's show the partner's image to make it feel like a collaboration.
+                        // Show partner's image and link to their profile
+                        val partnerId = if (sId == currentUserId) rId else sId
                         val partnerImage = if (sId == currentUserId) {
                             doc.getString("receiverImage") ?: ""
                         } else {
@@ -295,7 +285,8 @@ class HomeFragment : Fragment() {
                             taskTitle = doc.getString("taskTitle") ?: "Collab",
                             taskDescription = "Working with ${if (sId == currentUserId) doc.getString("receiverName") else doc.getString("senderName")}",
                             taskStatus = status,
-                            type = "collab"
+                            type = "collab",
+                            userId = partnerId
                         ))
                     }
                 }

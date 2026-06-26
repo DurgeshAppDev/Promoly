@@ -35,6 +35,18 @@ class AdapterCollabProgress(
         // Load Profile Images
         loadImage(holder.image1, item.copProfileImg1)
         loadImage(holder.image2, item.copProfileImg2)
+
+        val context = holder.itemView.context
+        holder.image1.setOnClickListener {
+            val intent = android.content.Intent(context, com.durgesh.promoly.activity.ViewProfile::class.java)
+            intent.putExtra("userId", item.senderId)
+            context.startActivity(intent)
+        }
+        holder.image2.setOnClickListener {
+            val intent = android.content.Intent(context, com.durgesh.promoly.activity.ViewProfile::class.java)
+            intent.putExtra("userId", item.receiverId)
+            context.startActivity(intent)
+        }
         
         // Handling progress
         holder.tvProgressPercent.text = "${item.copProgress}%"
