@@ -43,7 +43,7 @@ class AdapterTasks(private val list: List<ModelTasks>): RecyclerView.Adapter<Ada
             if (item.taskImage.startsWith("http")) {
                 Glide.with(holder.itemView.context)
                     .load(item.taskImage)
-                    .placeholder(R.drawable.profile_image)
+                    .placeholder(R.drawable.user)
                     .into(holder.image)
             } else {
                 try {
@@ -51,11 +51,11 @@ class AdapterTasks(private val list: List<ModelTasks>): RecyclerView.Adapter<Ada
                     val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                     holder.image.setImageBitmap(decodedImage)
                 } catch (e: Exception) {
-                    holder.image.setImageResource(R.drawable.profile_image)
+                    holder.image.setImageResource(R.drawable.user)
                 }
             }
         } else {
-            holder.image.setImageResource(R.drawable.profile_image)
+            holder.image.setImageResource(R.drawable.user)
         }
         
         // Status color coding

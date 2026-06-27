@@ -59,14 +59,14 @@ class AdapterCollabProgress(
 
     private fun loadImage(imageView: ImageView, imageData: String) {
         if (imageData.isEmpty()) {
-            imageView.setImageResource(R.drawable.profile_image)
+            imageView.setImageResource(R.drawable.user)
             return
         }
 
         if (imageData.startsWith("http")) {
             Glide.with(imageView.context)
                 .load(imageData)
-                .placeholder(R.drawable.profile_image)
+                .placeholder(R.drawable.user)
                 .into(imageView)
         } else {
             try {
@@ -74,7 +74,7 @@ class AdapterCollabProgress(
                 val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                 imageView.setImageBitmap(decodedImage)
             } catch (e: Exception) {
-                imageView.setImageResource(R.drawable.profile_image)
+                imageView.setImageResource(R.drawable.user)
             }
         }
     }

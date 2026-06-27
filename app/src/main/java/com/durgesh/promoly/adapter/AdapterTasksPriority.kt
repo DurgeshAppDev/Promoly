@@ -65,11 +65,11 @@ class AdapterTasksPriority(
                     val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                     holder.ivProfileImage.setImageBitmap(decodedImage)
                 } catch (e: Exception) {
-                    holder.ivProfileImage.setImageResource(R.drawable.profile_image)
+                    holder.ivProfileImage.setImageResource(R.drawable.user)
                 }
             }
         } else {
-            holder.ivProfileImage.setImageResource(R.drawable.profile_image)
+            holder.ivProfileImage.setImageResource(R.drawable.user)
         }
 
         holder.tvPriority.text = item.priority

@@ -164,7 +164,7 @@ class LoginActivity : AppCompatActivity() {
                     val isNewUser = task.result?.additionalUserInfo?.isNewUser ?: false
                     if (user != null) {
                         // Onboard fresh Google sign-ins into Firestore
-                        saveUserToDatabase(user.uid, user.displayName ?: "Google User", user.email ?: "")
+                        saveUserToDatabase(user.uid, user.displayName ?: "Name", user.email ?: "")
                         FcmUtils.updateFcmToken()
                     } else if (user != null) {
                         showToast("Welcome back!")

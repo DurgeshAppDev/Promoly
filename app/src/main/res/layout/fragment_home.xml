@@ -32,8 +32,10 @@
                 android:id="@+id/ivProfileImageofHome"
                 android:layout_width="@dimen/_45sdp"
                 android:layout_height="@dimen/_45sdp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile_image"
+                android:scaleType="centerInside"
+                android:padding="@dimen/_8sdp"
+                android:background="#F2F4F7"
+                android:src="@drawable/user"
                 app:shapeAppearanceOverlay="@style/CircleImageView"
                 android:elevation="@dimen/_4sdp" />
 
@@ -43,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="@dimen/_10sdp"
-                android:text="Hello creator"
+                android:text="Hello Name"
                 android:textColor="@color/blackR"
                 android:textSize="@dimen/_14ssp"
                 android:textStyle="bold" />
@@ -360,6 +362,15 @@
                 android:nestedScrollingEnabled="true"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_collab_request_layout" />
+
+            <!-- Progress Loader -->
+            <ProgressBar
+                android:id="@+id/pbHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/green"
+                android:visibility="gone" />
 
             <!-- Empty State Placeholder -->
             <LinearLayout

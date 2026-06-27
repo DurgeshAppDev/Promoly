@@ -1,10 +1,12 @@
 package com.durgesh.promoly.activity
 
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -35,7 +37,6 @@ class ViewProfile : AppCompatActivity() {
     private lateinit var tvProfileCollabsCount: TextView
     private lateinit var tvProfileFollowersCount: TextView
     private lateinit var tvProfileTasksCount: TextView
-
     private lateinit var rvCollabs: RecyclerView
     private lateinit var rvTasks: RecyclerView
 
@@ -104,7 +105,9 @@ class ViewProfile : AppCompatActivity() {
                 toggleFollow(btnFollow)
             }
             btnMessage.setOnClickListener {
-                showToast("Chat feature coming soon!")
+                val intent = Intent(this, ChatRoomActivity::class.java)
+                intent.putExtra("receiverId", profileUserId)
+                startActivity(intent)
             }
         }
     }
@@ -181,7 +184,7 @@ class ViewProfile : AppCompatActivity() {
         db.collection(Constants.COLLECTION_USERS).document(profileUserId!!)
             .addSnapshotListener { doc, _ ->
                 if (doc != null && doc.exists()) {
-                    val name = doc.getString("name") ?: "User"
+                    val name = doc.getString("name") ?: "Name"
                     val bio = doc.getString("bio") ?: ""
                     val imageUrl = doc.getString("profileImageUrl")
                     val followers = doc.getLong("followers") ?: 0L
@@ -192,14 +195,14 @@ class ViewProfile : AppCompatActivity() {
 
                     if (!imageUrl.isNullOrEmpty()) {
                         if (imageUrl.startsWith("http")) {
-                            Glide.with(this).load(imageUrl).placeholder(R.drawable.profile_image).into(ivProfileImage)
+                            Glide.with(this).load(imageUrl).placeholder(R.drawable.user).into(ivProfileImage)
                         } else {
                             try {
                                 val imageBytes = Base64.decode(imageUrl, Base64.DEFAULT)
                                 val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                                 ivProfileImage.setImageBitmap(decodedImage)
                             } catch (e: Exception) {
-                                ivProfileImage.setImageResource(R.drawable.profile_image)
+                                ivProfileImage.setImageResource(R.drawable.user)
                             }
                         }
                     }
@@ -227,8 +230,8 @@ class ViewProfile : AppCompatActivity() {
                             
                             // Only add to list if it's an active/completed collab (not pending/declined)
                             if (status == "Accepted" || status == "Running" || status == "Completed") {
-                                val senderName = doc.getString("senderName") ?: "User"
-                                val receiverName = doc.getString("receiverName") ?: "User"
+                                val senderName = doc.getString("senderName") ?: "Name"
+                                val receiverName = doc.getString("receiverName") ?: "Name"
 
                                 val displayName = if (senderId == currentUserId) {
                                     "You & $receiverName"
@@ -276,7 +279,7 @@ class ViewProfile : AppCompatActivity() {
                         val task = ModelTaskPriority(
                             id = doc.id,
                             userId = doc.getString("userId") ?: "",
-                            userName = doc.getString("userName") ?: "User",
+                            userName = doc.getString("userName") ?: "Name",
                             userProfileImage = doc.getString("userProfileImage") ?: "",
                             priority = doc.getString("priority") ?: "Medium Priority",
                             category = doc.getString("category") ?: "",

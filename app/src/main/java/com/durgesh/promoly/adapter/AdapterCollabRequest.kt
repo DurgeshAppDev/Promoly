@@ -48,18 +48,18 @@ class AdapterCollabRequest(
         // Handle Image loading (Base64 or URL)
         if (item.coProfileImg.isNotEmpty()) {
             if (item.coProfileImg.startsWith("http")) {
-                Glide.with(holder.itemView.context).load(item.coProfileImg).placeholder(R.drawable.profile_image).into(holder.image)
+                Glide.with(holder.itemView.context).load(item.coProfileImg).placeholder(R.drawable.user).into(holder.image)
             } else {
                 try {
                     val imageBytes = Base64.decode(item.coProfileImg, Base64.DEFAULT)
                     val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                     holder.image.setImageBitmap(decodedImage)
                 } catch (e: Exception) {
-                    holder.image.setImageResource(R.drawable.profile_image)
+                    holder.image.setImageResource(R.drawable.user)
                 }
             }
         } else {
-            holder.image.setImageResource(R.drawable.profile_image)
+            holder.image.setImageResource(R.drawable.user)
         }
 
         holder.tvAccept.setOnClickListener {
@@ -81,7 +81,7 @@ class AdapterCollabRequest(
         if (newStatus == "Accepted") {
             db.collection(Constants.COLLECTION_USERS).document(currentUserId).get()
                 .addOnSuccessListener { userDoc ->
-                    val receiverName = userDoc.getString("name") ?: "User"
+                    val receiverName = userDoc.getString("name") ?: "Name"
                     val receiverImage = userDoc.getString("profileImageUrl") ?: ""
 
                     val updates = hashMapOf(
@@ -102,7 +102,8 @@ class AdapterCollabRequest(
                                 context = context,
                                 receiverId = item.senderId,
                                 title = "Collaboration Accepted!",
-                                message = "$receiverName has accepted your collaboration request for \"${item.coDescription}\""
+                                message = "$receiverName has accepted your collaboration request for \"${item.coDescription}\"",
+                                type = "collab_accept"
                             )
 
                             onActionComplete()

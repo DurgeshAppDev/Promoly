@@ -20,8 +20,10 @@
             android:id="@+id/ivProfileImagecollab"
             android:layout_width="@dimen/_45sdp"
             android:layout_height="@dimen/_45sdp"
-            android:src="@drawable/profile_image"
-            android:scaleType="centerCrop"
+            android:scaleType="centerInside"
+            android:padding="@dimen/_8sdp"
+            android:background="#F2F4F7"
+            android:src="@drawable/user"
             app:shapeAppearanceOverlay="@style/CircleImageView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

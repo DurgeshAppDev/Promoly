@@ -128,7 +128,7 @@ class AddTaskFragment : Fragment() {
         // 1. Fetch User Data first to attach to the task
         db.collection(Constants.COLLECTION_USERS).document(currentUserId).get()
             .addOnSuccessListener { userDoc ->
-                val userName = userDoc.getString("name") ?: "User"
+                val userName = userDoc.getString("name") ?: "Name"
                 val userProfileImage = userDoc.getString("profileImageUrl") ?: ""
 
                 val title = etProjectTitle.text.toString().trim()

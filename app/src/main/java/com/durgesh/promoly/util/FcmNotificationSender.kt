@@ -19,8 +19,9 @@ object FcmNotificationSender {
     private const val BASE_URL = "https://fcm.googleapis.com/v1/projects/"
     private const val SCOPE = "https://www.googleapis.com/auth/firebase.messaging"
 
-    fun sendNotification(context: Context, receiverId: String, title: String, message: String) {
+    fun sendNotification(context: Context, receiverId: String, title: String, message: String, type: String = "general") {
         val db = FirebaseFirestore.getInstance()
+        val currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser?.uid ?: ""
         
         db.collection(Constants.COLLECTION_USERS).document(receiverId).get()
             .addOnSuccessListener { document ->
@@ -29,7 +30,7 @@ object FcmNotificationSender {
                     // We need to run network/IO operations on a background thread
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            executeSend(context, fcmToken, title, message)
+                            executeSend(context, fcmToken, title, message, type, currentUserId)
                         } catch (e: Exception) {
                             Log.e("FcmSender", "Error in executeSend", e)
                         }
@@ -43,7 +44,7 @@ object FcmNotificationSender {
             }
     }
 
-    private suspend fun executeSend(context: Context, token: String, title: String, message: String) {
+    private suspend fun executeSend(context: Context, token: String, title: String, message: String, type: String, senderId: String) {
         // 1. Get Access Token from Service Account JSON
         val accessToken = withContext(Dispatchers.IO) {
             getAccessToken(context)
@@ -63,18 +64,25 @@ object FcmNotificationSender {
         val json = JSONObject()
         val messageObj = JSONObject()
         val notificationObj = JSONObject()
+        val dataObj = JSONObject()
         val androidObj = JSONObject()
         val androidNotificationObj = JSONObject()
         
         notificationObj.put("title", title)
         notificationObj.put("body", message)
         
-        androidNotificationObj.put("channel_id", "collab_requests")
+        dataObj.put("type", type)
+        dataObj.put("senderId", senderId)
+        dataObj.put("title", title)
+        dataObj.put("message", message)
+        
+        androidNotificationObj.put("channel_id", if (type == "chat") "chat_messages" else "collab_requests")
         androidObj.put("notification", androidNotificationObj)
         androidObj.put("priority", "high")
         
         messageObj.put("token", token)
         messageObj.put("notification", notificationObj)
+        messageObj.put("data", dataObj)
         messageObj.put("android", androidObj)
         
         json.put("message", messageObj)

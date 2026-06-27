@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.durgesh.promoly.R
+import com.durgesh.promoly.activity.ChatRoomActivity
 import com.durgesh.promoly.activity.HomeActivity
 import com.durgesh.promoly.util.Constants
 import com.google.firebase.auth.FirebaseAuth
@@ -28,22 +29,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(remoteMessage)
         Log.d("FCM", "From: ${remoteMessage.from}")
 
-        // Check if message contains a notification payload.
-        remoteMessage.notification?.let {
-            Log.d("FCM", "Message Notification Body: ${it.body}")
-            showNotification(it.title ?: "New Notification", it.body ?: "")
-        }
+        val data = remoteMessage.data
+        val type = data["type"] ?: "general"
+        val senderId = data["senderId"] ?: ""
+        val title = data["title"] ?: remoteMessage.notification?.title ?: "New Notification"
+        val message = data["message"] ?: remoteMessage.notification?.body ?: ""
 
-        // Also check if message contains a data payload.
-        if (remoteMessage.data.isNotEmpty()) {
-            Log.d("FCM", "Message data payload: " + remoteMessage.data)
-            // If there's data but no notification, we might still want to show one
-            if (remoteMessage.notification == null) {
-                val title = remoteMessage.data["title"] ?: "New Update"
-                val body = remoteMessage.data["message"] ?: "Check the app for details"
-                showNotification(title, body)
-            }
-        }
+        showNotification(title, message, type, senderId)
     }
 
     private fun updateTokenInFirestore(token: String) {
@@ -60,23 +52,32 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             }
     }
 
-    private fun showNotification(title: String, message: String) {
-        val channelId = "collab_requests"
+    private fun showNotification(title: String, message: String, type: String, senderId: String) {
+        val channelId = if (type == "chat") "chat_messages" else "collab_requests"
+        val channelName = if (type == "chat") "Chat Messages" else "Collaboration Requests"
+        
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Collaboration Requests",
+                channelName,
                 NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(channel)
         }
 
-        val intent = Intent(this, HomeActivity::class.java)
+        val intent = if (type == "chat" && senderId.isNotEmpty()) {
+            Intent(this, ChatRoomActivity::class.java).apply {
+                putExtra("receiverId", senderId)
+            }
+        } else {
+            Intent(this, HomeActivity::class.java)
+        }
+        
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, intent,
+            this, System.currentTimeMillis().toInt(), intent,
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         )
 

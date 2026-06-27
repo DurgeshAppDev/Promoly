@@ -30,6 +30,9 @@ class CollabsFragment : Fragment() {
     private lateinit var btnRunning: com.google.android.material.button.MaterialButton
     private lateinit var btnCompleted: com.google.android.material.button.MaterialButton
     
+    private lateinit var pbCollabs: android.widget.ProgressBar
+    private lateinit var llEmptyCollabs: View
+
     private var currentFilter = "All"
 
     override fun onCreateView(
@@ -47,6 +50,8 @@ class CollabsFragment : Fragment() {
         btnActive = view.findViewById(R.id.btnActiveCollab)
         btnRunning = view.findViewById(R.id.btnPendingCollab)
         btnCompleted = view.findViewById(R.id.btnCompletedCollab)
+        pbCollabs = view.findViewById(R.id.pbCollabs)
+        llEmptyCollabs = view.findViewById(R.id.llEmptyCollabs)
 
         rvCollabProgress.layoutManager = LinearLayoutManager(requireContext())
         adapter = AdapterCollabProgress(progressList) { collab ->
@@ -141,6 +146,10 @@ class CollabsFragment : Fragment() {
     }
 
     private fun loadCollaborations() {
+        pbCollabs.visibility = View.VISIBLE
+        llEmptyCollabs.visibility = View.GONE
+        rvCollabProgress.visibility = View.GONE
+
         var query: com.google.firebase.firestore.Query = db.collection(Constants.COLLECTION_COLLABS)
         
         // If we want a specific status, filter by it in Firestore first
@@ -149,8 +158,10 @@ class CollabsFragment : Fragment() {
         }
 
         query.addSnapshotListener { snapshots, e ->
+            pbCollabs.visibility = View.GONE
             if (e != null) {
                 Log.e("CollabsFragment", "Listen failed.", e)
+                llEmptyCollabs.visibility = View.VISIBLE
                 return@addSnapshotListener
             }
 
@@ -179,8 +190,8 @@ class CollabsFragment : Fragment() {
                             if (senderId != currentUserId && receiverId != currentUserId) continue
                         }
 
-                        val senderName = doc.getString("senderName") ?: "User"
-                        val receiverName = doc.getString("receiverName") ?: "User"
+                        val senderName = doc.getString("senderName") ?: "Name"
+                        val receiverName = doc.getString("receiverName") ?: "Name"
                         
                         // Create a display name like "Sarah & You" or "Sarah & Alex"
                         val displayName = if (senderId == currentUserId) {
@@ -209,6 +220,14 @@ class CollabsFragment : Fragment() {
                     }
                 }
                 adapter.notifyDataSetChanged()
+
+                if (progressList.isEmpty()) {
+                    llEmptyCollabs.visibility = View.VISIBLE
+                    rvCollabProgress.visibility = View.GONE
+                } else {
+                    llEmptyCollabs.visibility = View.GONE
+                    rvCollabProgress.visibility = View.VISIBLE
+                }
             }
         }
     }

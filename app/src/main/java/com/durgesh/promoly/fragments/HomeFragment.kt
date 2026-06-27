@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -21,13 +22,17 @@ import com.durgesh.promoly.adapter.AdapterTasks
 import com.durgesh.promoly.model.ModelCollabRequest
 import com.durgesh.promoly.model.ModelTasks
 import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.DataRepository
+import com.durgesh.promoly.util.PreferenceManager
 import com.durgesh.promoly.util.showToast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 
 class HomeFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private lateinit var preferenceManager: PreferenceManager
 
     private lateinit var ivProfileImage: ImageView
     private lateinit var tvGreeting: TextView
@@ -36,6 +41,7 @@ class HomeFragment : Fragment() {
     private lateinit var tvActiveCollabsCount: TextView
     private lateinit var tvCompletedCollabsCount: TextView
     private lateinit var llEmptyCollabs: View
+    private lateinit var pbHome: android.widget.ProgressBar
     private lateinit var rvCollabRequests: RecyclerView
     private lateinit var rvTodaysTasks: RecyclerView
     
@@ -44,6 +50,11 @@ class HomeFragment : Fragment() {
     
     private lateinit var taskAdapter: AdapterTasks
     private val taskList = mutableListOf<ModelTasks>()
+
+    private var progressDialog: AlertDialog? = null
+    private var lastCollabDoc: DocumentSnapshot? = null
+    private var isCollabLoading = false
+    private var hasMoreCollabs = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,6 +65,7 @@ class HomeFragment : Fragment() {
 
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
+        preferenceManager = PreferenceManager(requireContext())
 
         ivProfileImage = view.findViewById(R.id.ivProfileImageofHome)
         tvGreeting = view.findViewById(R.id.tvGreeting)
@@ -62,6 +74,7 @@ class HomeFragment : Fragment() {
         tvActiveCollabsCount = view.findViewById(R.id.tvActiveCollabsCount)
         tvCompletedCollabsCount = view.findViewById(R.id.tvCompletedCollabsCount)
         llEmptyCollabs = view.findViewById(R.id.llEmptyCollabs)
+        pbHome = view.findViewById(R.id.pbHome)
         rvCollabRequests = view.findViewById(R.id.rvCollabRequests)
         rvTodaysTasks = view.findViewById(R.id.rvTodaysTasks)
         
@@ -84,9 +97,33 @@ class HomeFragment : Fragment() {
         rvCollabRequests.layoutManager = LinearLayoutManager(requireContext())
         collabAdapter = AdapterCollabRequest(collabList) {
             // Callback when a request is accepted or declined
+            lastCollabDoc = null
             loadCollabRequests()
         }
         rvCollabRequests.adapter = collabAdapter
+
+        // Pagination Scroll Listener for Collab Requests
+        rvCollabRequests.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                if (!isCollabLoading && hasMoreCollabs) {
+                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                        && totalItemCount >= 10
+                    ) {
+                        loadCollabRequests(isMore = true)
+                    }
+                }
+            }
+        })
+
+        // Load cached profile data first
+        loadCachedData()
 
         // Initial data load
         loadUserProfileData()
@@ -97,6 +134,50 @@ class HomeFragment : Fragment() {
         return view
     }
 
+    private fun loadCachedData() {
+        val name = preferenceManager.getUserName()
+        tvGreeting.text = "Hello $name"
+        tvActiveTasksCount.text = preferenceManager.getTasksCount().toString()
+        tvActiveCollabsCount.text = preferenceManager.getCollabsCount().toString()
+
+        val imageUrl = preferenceManager.getUserImage()
+        if (!imageUrl.isNullOrEmpty()) {
+            displayProfileImage(imageUrl)
+        }
+
+        // Use pre-fetched data from Splash
+        if (DataRepository.cachedTasks.isNotEmpty()) {
+            taskList.clear()
+            taskList.addAll(DataRepository.cachedTasks)
+            taskAdapter.notifyDataSetChanged()
+        }
+
+        if (DataRepository.cachedCollabRequests.isNotEmpty()) {
+            collabList.clear()
+            collabList.addAll(DataRepository.cachedCollabRequests)
+            collabAdapter.notifyDataSetChanged()
+            tvNewCollabs.text = "${collabList.size} new"
+            llEmptyCollabs.visibility = View.GONE
+            rvCollabRequests.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showLoadingDialog() {
+        if (progressDialog == null) {
+            val builder = AlertDialog.Builder(requireContext())
+            val dialogView = layoutInflater.inflate(R.layout.dialog_progress, null)
+            builder.setView(dialogView)
+            builder.setCancelable(false)
+            progressDialog = builder.create()
+            progressDialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        }
+        progressDialog?.show()
+    }
+
+    private fun hideLoadingDialog() {
+        progressDialog?.dismiss()
+    }
+
     private fun loadUserProfileData() {
         val currentUserId = auth.currentUser?.uid ?: return
 
@@ -105,25 +186,18 @@ class HomeFragment : Fragment() {
             .get()
             .addOnSuccessListener { document ->
                 if (isAdded && document != null && document.exists()) {
-                    val name = document.getString("name") ?: "User"
+                    val name = document.getString("name") ?: "Name"
                     val imageUrl = document.getString("profileImageUrl")
+                    val bio = document.getString("bio") ?: ""
+                    val followers = document.getLong("followers") ?: 0L
 
                     tvGreeting.text = "Hello ${name}"
 
+                    // Update cache (name, image, bio, followers)
+                    preferenceManager.saveUserProfile(name, bio, imageUrl, followers)
+
                     if (!imageUrl.isNullOrEmpty()) {
-                        if (imageUrl.startsWith("http")) {
-                            // Legacy URL fallback
-                            Glide.with(this).load(imageUrl).into(ivProfileImage)
-                        } else {
-                            // Decode and load Base64 string
-                            try {
-                                val imageBytes = Base64.decode(imageUrl, Base64.DEFAULT)
-                                val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                                ivProfileImage.setImageBitmap(decodedImage)
-                            } catch (e: Exception) {
-                                Log.e("ProfileFragment", "Error decoding base64 image", e)
-                            }
-                        }
+                        displayProfileImage(imageUrl)
                     }
                 }
             }
@@ -134,30 +208,82 @@ class HomeFragment : Fragment() {
             }
     }
 
-    private fun loadCollabRequests() {
-        val currentUserId = auth.currentUser?.uid ?: return
+    private fun displayProfileImage(imageUrl: String) {
+        if (imageUrl.startsWith("http")) {
+            // Legacy URL fallback
+            Glide.with(this).load(imageUrl).into(ivProfileImage)
+        } else {
+            // Decode and load Base64 string
+            try {
+                val imageBytes = Base64.decode(imageUrl, Base64.DEFAULT)
+                val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                ivProfileImage.setImageBitmap(decodedImage)
+            } catch (e: Exception) {
+                Log.e("HomeFragment", "Error decoding base64 image", e)
+            }
+        }
+    }
 
-        db.collection(Constants.COLLECTION_COLLABS)
+    private fun loadCollabRequests(isMore: Boolean = false) {
+        val currentUserId = auth.currentUser?.uid ?: return
+        if (isCollabLoading) return
+
+        if (isMore) {
+            showLoadingDialog()
+        } else {
+            pbHome.visibility = View.VISIBLE
+            llEmptyCollabs.visibility = View.GONE
+        }
+        isCollabLoading = true
+
+        var query = db.collection(Constants.COLLECTION_COLLABS)
             .whereEqualTo("receiverId", currentUserId)
             .whereEqualTo("status", "Pending")
-            .get()
+            .limit(10)
+
+        if (isMore && lastCollabDoc != null) {
+            query = query.startAfter(lastCollabDoc!!)
+        }
+
+        query.get()
             .addOnSuccessListener { documents ->
+                isCollabLoading = false
+                hideLoadingDialog()
+                pbHome.visibility = View.GONE
+                
                 if (isAdded) {
-                    collabList.clear()
+                    if (!isMore) {
+                        collabList.clear()
+                        DataRepository.cachedCollabRequests.clear()
+                    }
+
                     for (doc in documents) {
                         val request = ModelCollabRequest(
                             id = doc.id,
                             coProfileImg = doc.getString("senderImage") ?: "",
-                            coName = doc.getString("senderName") ?: "User",
+                            coName = doc.getString("senderName") ?: "Name",
                             coDescription = "Collab on: ${doc.getString("taskTitle") ?: "Project"}",
                             senderId = doc.getString("senderId") ?: "",
                             taskId = doc.getString("taskId") ?: "",
                             status = doc.getString("status") ?: "Pending"
                         )
                         collabList.add(request)
+                        
+                        // Keep cache updated with first 10
+                        if (!isMore && collabList.size <= 10) {
+                            DataRepository.cachedCollabRequests.add(request)
+                        }
                     }
+
+                    if (documents.size() > 0) {
+                        lastCollabDoc = documents.documents[documents.size() - 1]
+                        hasMoreCollabs = documents.size() == 10
+                    } else {
+                        hasMoreCollabs = false
+                    }
+
                     collabAdapter.notifyDataSetChanged()
-                    tvNewCollabs.text = "${collabList.size} new"
+                    tvNewCollabs.text = "${collabList.size}${if (hasMoreCollabs) "+" else ""} new"
                     
                     // Toggle empty state visibility
                     if (collabList.isEmpty()) {
@@ -170,6 +296,9 @@ class HomeFragment : Fragment() {
                 }
             }
             .addOnFailureListener { e ->
+                isCollabLoading = false
+                hideLoadingDialog()
+                pbHome.visibility = View.GONE
                 if (isAdded) {
                     Log.e("HomeFragment", "Error loading collab requests", e)
                 }
@@ -185,7 +314,9 @@ class HomeFragment : Fragment() {
             .get()
             .addOnSuccessListener { documents ->
                 if (isAdded) {
-                    tvActiveTasksCount.text = documents.size().toString()
+                    val count = documents.size()
+                    tvActiveTasksCount.text = count.toString()
+                    preferenceManager.saveTasksCount(count)
                 }
             }
 
@@ -207,6 +338,7 @@ class HomeFragment : Fragment() {
                         }
                     }
                     tvActiveCollabsCount.text = count.toString()
+                    preferenceManager.saveCollabsCount(count)
                 }
             }
 
@@ -234,11 +366,13 @@ class HomeFragment : Fragment() {
         val ownTasksQuery = db.collection(Constants.COLLECTION_TASKS)
             .whereEqualTo("userId", currentUserId)
             .whereEqualTo("status", "Active")
+            .limit(10) // Limit for initial load
             .get()
 
         // 2. Fetch user's active collaborations
         val collabsQuery = db.collection(Constants.COLLECTION_COLLABS)
             .whereIn("status", listOf("Accepted", "Running"))
+            .limit(10) // Limit for initial load
             .get()
 
         com.google.android.gms.tasks.Tasks.whenAllComplete(ownTasksQuery, collabsQuery)
@@ -246,11 +380,12 @@ class HomeFragment : Fragment() {
                 if (!isAdded) return@addOnSuccessListener
                 
                 taskList.clear()
+                DataRepository.cachedTasks.clear()
                 
                 // Add own tasks
                 val ownDocs = ownTasksQuery.result?.documents ?: emptyList()
                 for (doc in ownDocs) {
-                    taskList.add(ModelTasks(
+                    val task = ModelTasks(
                         id = doc.id,
                         taskImage = doc.getString("userProfileImage") ?: "",
                         taskTitle = doc.getString("projectTitle") ?: "Task",
@@ -258,7 +393,9 @@ class HomeFragment : Fragment() {
                         taskStatus = "Active",
                         type = "task",
                         userId = currentUserId
-                    ))
+                    )
+                    taskList.add(task)
+                    DataRepository.cachedTasks.add(task)
                 }
                 
                 // Add collaborating tasks
@@ -279,7 +416,7 @@ class HomeFragment : Fragment() {
                             doc.getString("senderImage") ?: ""
                         }
 
-                        taskList.add(ModelTasks(
+                        val collabTask = ModelTasks(
                             id = doc.id,
                             taskImage = partnerImage,
                             taskTitle = doc.getString("taskTitle") ?: "Collab",
@@ -287,7 +424,11 @@ class HomeFragment : Fragment() {
                             taskStatus = status,
                             type = "collab",
                             userId = partnerId
-                        ))
+                        )
+                        taskList.add(collabTask)
+                        if (DataRepository.cachedTasks.size < 10) {
+                            DataRepository.cachedTasks.add(collabTask)
+                        }
                     }
                 }
                 
@@ -298,6 +439,7 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         loadUserProfileData()
+        lastCollabDoc = null
         loadCollabRequests()
         loadStatCounts()
         loadTodaysTasks()

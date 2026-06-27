@@ -14,8 +14,10 @@
         android:id="@+id/ivSearchUserImage"
         android:layout_width="@dimen/_35sdp"
         android:layout_height="@dimen/_35sdp"
+        android:scaleType="centerInside"
+        android:padding="@dimen/_6sdp"
+        android:background="#F2F4F7"
         android:src="@drawable/user"
-        android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/CircleImageView" />
 
     <TextView

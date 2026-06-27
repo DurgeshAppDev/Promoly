@@ -25,8 +25,10 @@
                 android:id="@+id/ivProfileImage"
                 android:layout_width="@dimen/_32sdp"
                 android:layout_height="@dimen/_32sdp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/profile_image"
+                android:scaleType="centerInside"
+                android:padding="@dimen/_4sdp"
+                android:background="#F2F4F7"
+                android:src="@drawable/user"
                 app:shapeAppearanceOverlay="@style/CircleImageView"
                 android:layout_centerVertical="true" />
 

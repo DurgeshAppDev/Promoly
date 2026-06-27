@@ -170,7 +170,7 @@ class RegisterActivity : AppCompatActivity() {
                     val user = auth.currentUser
                     if (user != null) {
                         // Saves the newly logged-in user details to Cloud Firestore
-                        saveUserToDatabase(user.uid, user.displayName ?: "Google User", user.email ?: "")
+                        saveUserToDatabase(user.uid, user.displayName ?: "Name", user.email ?: "")
                     }
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)

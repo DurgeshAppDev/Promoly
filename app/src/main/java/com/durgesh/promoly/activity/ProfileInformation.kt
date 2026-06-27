@@ -16,20 +16,23 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide // Optional: Highly recommended for loading URLs into ImageViews
 import com.durgesh.promoly.R
 import com.durgesh.promoly.util.Constants
+import com.durgesh.promoly.util.PreferenceManager
 import com.durgesh.promoly.util.showToast
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.firebase.auth.FirebaseAuth
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.ByteArrayOutputStream
 
 class ProfileInformation : AppCompatActivity() {
-
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
-
-    // UI Elements
+    private lateinit var preferenceManager: PreferenceManager
     private lateinit var etFullName: EditText
     private lateinit var etEmail: EditText
     private lateinit var etBio: EditText
@@ -45,44 +48,47 @@ class ProfileInformation : AppCompatActivity() {
     private var selectedImageUri: Uri? = null
     private var base64ImageString: String? = null
     private var selectedImageBytes: ByteArray? = null
+
+    // Image Cropper Contract
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            val uriContent = result.uriContent
+            if (uriContent != null) {
+                try {
+                    val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uriContent))
+                    if (bitmap != null) {
+                        ivEditProfileImage.setImageBitmap(bitmap)
+
+                        val byteArrayOutputStream = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
+                        selectedImageBytes = byteArrayOutputStream.toByteArray()
+                        base64ImageString = Base64.encodeToString(selectedImageBytes, Base64.DEFAULT)
+                    }
+                } catch (e: Exception) {
+                    showToast("Failed to process cropped image: ${e.message}")
+                }
+            }
+        } else {
+            val error = result.error
+            error?.let { showToast("Cropping failed: ${it.message}") }
+        }
+    }
+
     // Photo Picker Contract to grab an image from the gallery
     private val getImageContract = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
-            selectedImageUri = uri
-            
-            try {
-                // Downsample and process the image efficiently
-                val inputStream = contentResolver.openInputStream(uri)
-                val options = BitmapFactory.Options().apply {
-                    inJustDecodeBounds = true
+            // Start cropping after selecting an image
+            val cropOptions = CropImageContractOptions(
+                uri,
+                CropImageOptions().apply {
+                    guidelines = CropImageView.Guidelines.ON
+                    aspectRatioX = 1
+                    aspectRatioY = 1
+                    fixAspectRatio = true
+                    cropShape = CropImageView.CropShape.OVAL
                 }
-                BitmapFactory.decodeStream(inputStream, null, options)
-                inputStream?.close()
-
-                // Calculate scale factor to avoid massive bitmaps
-                var scale = 1
-                while (options.outWidth / scale / 2 >= 800 && options.outHeight / scale / 2 >= 800) {
-                    scale *= 2
-                }
-
-                val decodeOptions = BitmapFactory.Options().apply {
-                    inSampleSize = scale
-                }
-                val finalInputStream = contentResolver.openInputStream(uri)
-                val bitmap = BitmapFactory.decodeStream(finalInputStream, null, decodeOptions)
-                finalInputStream?.close()
-
-                if (bitmap != null) {
-                    ivEditProfileImage.setImageBitmap(bitmap)
-                    
-                    val byteArrayOutputStream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
-                    selectedImageBytes = byteArrayOutputStream.toByteArray()
-                    base64ImageString = Base64.encodeToString(selectedImageBytes, Base64.DEFAULT)
-                }
-            } catch (e: Exception) {
-                showToast("Failed to process image: ${e.message}")
-            }
+            )
+            cropImage.launch(cropOptions)
         }
     }
 
@@ -90,7 +96,6 @@ class ProfileInformation : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_profile_information)
-        
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainProfileInfo)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(v.paddingLeft, systemBars.top, v.paddingRight, v.paddingBottom)
@@ -100,6 +105,7 @@ class ProfileInformation : AppCompatActivity() {
         // Initialize Firebase instances
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
+        preferenceManager = PreferenceManager(this)
 
         // Bind Views
         btnBackInfo = findViewById(R.id.btnBackInfo)
@@ -204,6 +210,10 @@ class ProfileInformation : AppCompatActivity() {
             .document(currentUserId)
             .update(updatesMap)
             .addOnSuccessListener {
+                // Update local cache
+                val currentFollowers = preferenceManager.getUserFollowers()
+                preferenceManager.saveUserProfile(name, bio, finalImageUrl, currentFollowers)
+
                 // Now update denormalized data and wait for completion before finishing
                 updateDenormalizedUserData(currentUserId, name, finalImageUrl) {
                     showToast("Profile Updated Everywhere!")

@@ -92,20 +92,22 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_margin="@dimen/_5sdp"
+                android:padding="@dimen/_2sdp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAllTasks"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_32sdp"
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="wrap_content"
                     android:backgroundTint="@color/lightgreen"
                     android:text="All Tasks"
                     android:textAllCaps="false"
                     android:textColor="@color/green"
                     android:textSize="@dimen/_10ssp"
                     android:textStyle="bold"
-                    app:cornerRadius="@dimen/_16sdp"
+                    app:cornerRadius="@dimen/_12sdp"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:stateListAnimator="@animator/button_click_animator" />
@@ -113,15 +115,15 @@
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnMyTasks"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_32sdp"
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_10sdp"
                     android:backgroundTint="#F2F4F7"
                     android:text="My Tasks"
                     android:textAllCaps="false"
                     android:textColor="@color/grey"
                     android:textSize="@dimen/_10ssp"
-                    app:cornerRadius="@dimen/_16sdp"
+                    app:cornerRadius="@dimen/_12sdp"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:stateListAnimator="@animator/button_click_animator" />
@@ -142,5 +144,42 @@
         android:paddingBottom="@dimen/_20sdp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_task_priority_layout" />
+
+    <!-- Empty State -->
+    <LinearLayout
+        android:id="@+id/llEmptyTasks"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_80sdp"
+            android:alpha="0.3"
+            android:src="@drawable/ic_tasks"
+            app:tint="@color/grey" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:text="No tasks found"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/_11ssp"
+            android:fontFamily="@font/poppins"
+            android:alpha="0.6" />
+    </LinearLayout>
+
+    <!-- Loading State -->
+    <ProgressBar
+        android:id="@+id/pbTasks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/green"
+        android:visibility="gone" />
 
 </LinearLayout>

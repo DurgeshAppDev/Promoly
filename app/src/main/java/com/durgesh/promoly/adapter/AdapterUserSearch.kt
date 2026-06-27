@@ -33,18 +33,18 @@ class AdapterUserSearch(
         
         if (user.profileImageUrl.isNotEmpty()) {
             if (user.profileImageUrl.startsWith("http")) {
-                Glide.with(holder.itemView.context).load(user.profileImageUrl).placeholder(R.drawable.profile_image).into(holder.ivProfile)
+                Glide.with(holder.itemView.context).load(user.profileImageUrl).placeholder(R.drawable.user).into(holder.ivProfile)
             } else {
                 try {
                     val imageBytes = Base64.decode(user.profileImageUrl, Base64.DEFAULT)
                     val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                     holder.ivProfile.setImageBitmap(decodedImage)
                 } catch (e: Exception) {
-                    holder.ivProfile.setImageResource(R.drawable.profile_image)
+                    holder.ivProfile.setImageResource(R.drawable.user)
                 }
             }
         } else {
-            holder.ivProfile.setImageResource(R.drawable.profile_image)
+            holder.ivProfile.setImageResource(R.drawable.user)
         }
 
         holder.itemView.setOnClickListener {

@@ -30,6 +30,8 @@ class TasksFragment : Fragment() {
     private lateinit var btnMyTasks: MaterialButton
     private lateinit var etSearchTasks: EditText
     private lateinit var btnSearchTasks: android.widget.ImageButton
+    private lateinit var pbTasks: android.widget.ProgressBar
+    private lateinit var llEmptyTasks: View
     private var showingOnlyMyTasks = false
     private var taskListener: com.google.firebase.firestore.ListenerRegistration? = null
 
@@ -44,6 +46,8 @@ class TasksFragment : Fragment() {
         btnMyTasks = view.findViewById(R.id.btnMyTasks)
         etSearchTasks = view.findViewById(R.id.etSearchTasks)
         btnSearchTasks = view.findViewById(R.id.btnSearchTasks)
+        pbTasks = view.findViewById(R.id.pbTasks)
+        llEmptyTasks = view.findViewById(R.id.llEmptyTasks)
 
         rvTasks.layoutManager = LinearLayoutManager(requireContext())
         adapter = AdapterTasksPriority(taskList, FirebaseAuth.getInstance().currentUser?.uid ?: "") { task ->
@@ -85,7 +89,10 @@ class TasksFragment : Fragment() {
 
     private fun searchTasks(searchText: String) {
         val db = FirebaseFirestore.getInstance()
-        
+        pbTasks.visibility = View.VISIBLE
+        llEmptyTasks.visibility = View.GONE
+        rvTasks.visibility = View.GONE
+
         // Search is always GLOBAL across all tasks as requested
         val query: Query = db.collection(Constants.COLLECTION_TASKS)
             .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -95,6 +102,7 @@ class TasksFragment : Fragment() {
         updateFilterUI()
 
         query.get().addOnSuccessListener { documents ->
+            pbTasks.visibility = View.GONE
             taskList.clear()
             val lowerSearch = searchText.lowercase()
             for (doc in documents) {
@@ -112,9 +120,22 @@ class TasksFragment : Fragment() {
                 }
             }
             adapter.notifyDataSetChanged()
+            
+            if (taskList.isEmpty()) {
+                llEmptyTasks.visibility = View.VISIBLE
+                rvTasks.visibility = View.GONE
+            } else {
+                llEmptyTasks.visibility = View.GONE
+                rvTasks.visibility = View.VISIBLE
+            }
+
             if (taskList.isEmpty() && isAdded) {
                 showToast("No tasks found matching '$searchText'")
             }
+        }.addOnFailureListener {
+            pbTasks.visibility = View.GONE
+            llEmptyTasks.visibility = View.VISIBLE
+            rvTasks.visibility = View.GONE
         }
     }
 
@@ -122,7 +143,7 @@ class TasksFragment : Fragment() {
         return ModelTaskPriority(
             id = doc.getString("id") ?: doc.id,
             userId = doc.getString("userId") ?: "",
-            userName = doc.getString("userName") ?: "User",
+            userName = doc.getString("userName") ?: "Name",
             userProfileImage = doc.getString("userProfileImage") ?: "",
             priority = doc.getString("priority") ?: "Medium Priority",
             category = doc.getString("category") ?: "",
@@ -184,7 +205,7 @@ class TasksFragment : Fragment() {
                 // 2. Fetch sender's info (current user) to denormalize into the request
                 db.collection(Constants.COLLECTION_USERS).document(currentUserId).get()
                     .addOnSuccessListener { senderDoc ->
-                        val senderName = senderDoc.getString("name") ?: "User"
+                        val senderName = senderDoc.getString("name") ?: "Name"
                         val senderImage = senderDoc.getString("profileImageUrl") ?: ""
 
                         val requestMap = hashMapOf(
@@ -209,7 +230,8 @@ class TasksFragment : Fragment() {
                                             context = ctx,
                                             receiverId = task.userId,
                                             title = "New Collaboration Request",
-                                            message = "$senderName wants to collaborate on \"${task.title}\""
+                                            message = "$senderName wants to collaborate on \"${task.title}\"",
+                                            type = "collab_request"
                                         )
                                     }
                                 }
@@ -226,6 +248,10 @@ class TasksFragment : Fragment() {
         val db = FirebaseFirestore.getInstance()
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
+        pbTasks.visibility = View.VISIBLE
+        llEmptyTasks.visibility = View.GONE
+        rvTasks.visibility = View.GONE
+
         // Remove old listener if it exists
         taskListener?.remove()
 
@@ -233,9 +259,11 @@ class TasksFragment : Fragment() {
         taskListener = db.collection(Constants.COLLECTION_TASKS)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
+                pbTasks.visibility = View.GONE
                 if (e != null) {
                     Log.e("TasksFragment", "Listen failed.", e)
                     if (isAdded) showToast("Failed to load live updates")
+                    llEmptyTasks.visibility = View.VISIBLE
                     return@addSnapshotListener
                 }
 
@@ -258,6 +286,14 @@ class TasksFragment : Fragment() {
                     }
                     adapter.notifyDataSetChanged()
                     
+                    if (taskList.isEmpty()) {
+                        llEmptyTasks.visibility = View.VISIBLE
+                        rvTasks.visibility = View.GONE
+                    } else {
+                        llEmptyTasks.visibility = View.GONE
+                        rvTasks.visibility = View.VISIBLE
+                    }
+
                     if (taskList.isEmpty() && isAdded) {
                         Log.d("TasksFragment", if (showingOnlyMyTasks) "No personal tasks found" else "No global tasks found")
                     }
