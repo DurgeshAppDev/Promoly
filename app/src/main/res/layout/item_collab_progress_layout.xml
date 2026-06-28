@@ -60,10 +60,10 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivProfile1"
-                android:layout_width="@dimen/_45sdp"
-                android:layout_height="@dimen/_45sdp"
+                android:layout_width="@dimen/_55sdp"
+                android:layout_height="@dimen/_55sdp"
                 android:scaleType="centerInside"
-                android:padding="@dimen/_8sdp"
+                android:padding="@dimen/_5sdp"
                 android:background="#F2F4F7"
                 android:src="@drawable/user"
                 app:shapeAppearanceOverlay="@style/CircleImageView"
@@ -72,11 +72,11 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/ivProfile2"
-                android:layout_width="@dimen/_45sdp"
-                android:layout_height="@dimen/_45sdp"
+                android:layout_width="@dimen/_55sdp"
+                android:layout_height="@dimen/_55sdp"
                 android:layout_marginStart="@dimen/_30sdp"
                 android:scaleType="centerInside"
-                android:padding="@dimen/_8sdp"
+                android:padding="@dimen/_5sdp"
                 android:background="#F2F4F7"
                 android:src="@drawable/user"
                 app:shapeAppearanceOverlay="@style/CircleImageView"

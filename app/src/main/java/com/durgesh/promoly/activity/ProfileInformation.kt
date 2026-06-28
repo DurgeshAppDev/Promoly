@@ -2,6 +2,7 @@ package com.durgesh.promoly.activity
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
@@ -86,6 +87,11 @@ class ProfileInformation : AppCompatActivity() {
                     aspectRatioY = 1
                     fixAspectRatio = true
                     cropShape = CropImageView.CropShape.OVAL
+                    activityTitle = "Crop & Confirm"
+                    activityMenuIconColor = Color.WHITE
+                    toolbarColor = Color.parseColor("#006C49")
+                    toolbarTitleColor = Color.WHITE
+                    toolbarBackButtonColor = Color.WHITE
                 }
             )
             cropImage.launch(cropOptions)
@@ -229,7 +235,7 @@ class ProfileInformation : AppCompatActivity() {
     private fun updateDenormalizedUserData(userId: String, newName: String, newImageUrl: String?, onComplete: () -> Unit) {
         val db = FirebaseFirestore.getInstance()
 
-        // Use separate tasks to track completion of both updates
+        // 1. Update Tasks where the user is the owner
         val taskUpdate = db.collection(Constants.COLLECTION_TASKS)
             .whereEqualTo("userId", userId)
             .get()
@@ -243,7 +249,8 @@ class ProfileInformation : AppCompatActivity() {
                 batch.commit()
             }
 
-        val collabUpdate = db.collection(Constants.COLLECTION_COLLABS)
+        // 2. Update Collabs where the user is the Sender
+        val collabSenderUpdate = db.collection(Constants.COLLECTION_COLLABS)
             .whereEqualTo("senderId", userId)
             .get()
             .continueWithTask { task ->
@@ -256,8 +263,25 @@ class ProfileInformation : AppCompatActivity() {
                 batch.commit()
             }
 
-        // Wait for both batches to finish
-        com.google.android.gms.tasks.Tasks.whenAllComplete(taskUpdate, collabUpdate)
+        // 3. Update Collabs where the user is the Receiver
+        val collabReceiverUpdate = db.collection(Constants.COLLECTION_COLLABS)
+            .whereEqualTo("receiverId", userId)
+            .get()
+            .continueWithTask { task ->
+                val batch = db.batch()
+                for (doc in task.result.documents) {
+                    // Only update if receiver info exists (accepted collabs)
+                    if (doc.contains("receiverName")) {
+                        val collabUpdates = hashMapOf<String, Any>("receiverName" to newName)
+                        if (newImageUrl != null) collabUpdates["receiverImage"] = newImageUrl
+                        batch.update(doc.reference, collabUpdates)
+                    }
+                }
+                batch.commit()
+            }
+
+        // Wait for all batches to finish
+        com.google.android.gms.tasks.Tasks.whenAllComplete(taskUpdate, collabSenderUpdate, collabReceiverUpdate)
             .addOnCompleteListener {
                 onComplete()
             }

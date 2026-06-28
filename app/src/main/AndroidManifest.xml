@@ -57,6 +57,10 @@
             android:name=".activity.ProfileInformation"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.PaymentMethodsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
 
         <service
             android:name=".service.MyFirebaseMessagingService"
@@ -78,6 +82,10 @@
             android:name=".activity.ChatRoomActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name="com.canhub.cropper.CropImageActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
     </application>
 
 </manifest>

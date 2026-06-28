@@ -161,16 +161,10 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    val isNewUser = task.result?.additionalUserInfo?.isNewUser ?: false
                     if (user != null) {
-                        // Onboard fresh Google sign-ins into Firestore
-                        saveUserToDatabase(user.uid, user.displayName ?: "Name", user.email ?: "")
+                        // Safely check if user exists before creating a new document
+                        checkAndInitializeUserData(user.uid, user.email ?: "", user.displayName ?: "Name")
                         FcmUtils.updateFcmToken()
-                    } else if (user != null) {
-                        showToast("Welcome back!")
-                        FcmUtils.updateFcmToken()
-                        startActivity(Intent(this, HomeActivity::class.java))
-                        finish()
                     }
                 } else {
                     Log.w(TAG, "Firebase context link failed", task.exception)
@@ -204,22 +198,22 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    private fun checkAndInitializeUserData(userId: String, email: String) {
+    private fun checkAndInitializeUserData(userId: String, email: String, providedName: String? = null) {
         val db = FirebaseFirestore.getInstance()
         val userDocRef = db.collection(Constants.COLLECTION_USERS).document(userId)
 
         userDocRef.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
-                // User document already exists, proceed to Home
-                showToast("Login Successful!")
+                // User document already exists, DO NOT overwrite. Proceed to Home.
+                showToast("Welcome back!")
                 FcmUtils.updateFcmToken()
                 startActivity(Intent(this, HomeActivity::class.java))
                 finish()
             } else {
-                // If for some reason the document wasn't created during registration, initialize it now
+                // If the document doesn't exist, create it (New registration via Google or first-time Email login)
                 val userMap = HashMap<String, Any>()
                 userMap["uid"] = userId
-                userMap["name"] = email.substringBefore("@") // Default name fallback from email
+                userMap["name"] = providedName ?: email.substringBefore("@")
                 userMap["email"] = email
                 userMap["bio"] = ""
                 userMap["phone"] = ""

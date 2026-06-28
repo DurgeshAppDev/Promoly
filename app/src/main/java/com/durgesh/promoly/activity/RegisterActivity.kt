@@ -169,14 +169,39 @@ class RegisterActivity : AppCompatActivity() {
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
                     if (user != null) {
-                        // Saves the newly logged-in user details to Cloud Firestore
-                        saveUserToDatabase(user.uid, user.displayName ?: "Name", user.email ?: "")
+                        // Check if user already exists to avoid overwriting their profile data
+                        checkAndInitializeUserData(user.uid, user.email ?: "", user.displayName ?: "Name")
                     }
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     showToast("Authentication Failed.")
                 }
             }
+    }
+
+
+    private fun checkAndInitializeUserData(userId: String, email: String, providedName: String) {
+        val db = FirebaseFirestore.getInstance()
+        val userDocRef = db.collection(Constants.COLLECTION_USERS).document(userId)
+
+        userDocRef.get().addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                // User already exists, just go to Home
+                showToast("Welcome back!")
+                val intent = Intent(this, HomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            } else {
+                // New user registration via Google
+                saveUserToDatabase(userId, providedName, email)
+            }
+        }.addOnFailureListener { e ->
+            Log.e("FIRESTORE_ERR", "Error checking document", e)
+            // Fallback: try to save anyway if check fails, but maybe safer to just error?
+            // saveUserToDatabase(userId, providedName, email)
+            showToast("Failed to verify user data. Please try again.")
+        }
     }
 
 

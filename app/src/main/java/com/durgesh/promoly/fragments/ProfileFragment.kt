@@ -77,7 +77,8 @@ class ProfileFragment : Fragment() {
         }
 
         paymentMethods.setOnClickListener {
-            showToast("Payment Methods Clicked")
+            val intent = Intent(requireContext(), com.durgesh.promoly.activity.PaymentMethodsActivity::class.java)
+            startActivity(intent)
         }
 
         logoutButton.setOnClickListener {
