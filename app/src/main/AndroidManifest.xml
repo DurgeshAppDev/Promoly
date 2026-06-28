@@ -61,6 +61,10 @@
             android:name=".activity.PaymentMethodsActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activity.NotificationSettingsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
 
         <service
             android:name=".service.MyFirebaseMessagingService"
