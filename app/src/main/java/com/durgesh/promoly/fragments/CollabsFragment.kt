@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.durgesh.promoly.R
 import com.durgesh.promoly.adapter.AdapterCollabProgress
 import com.durgesh.promoly.model.ModelCollabProgress
-
 import android.util.Log
 import com.durgesh.promoly.util.Constants
 import com.durgesh.promoly.util.showToast
@@ -23,28 +22,19 @@ class CollabsFragment : Fragment() {
     private lateinit var adapter: AdapterCollabProgress
     private val progressList = mutableListOf<ModelCollabProgress>()
     private lateinit var db: FirebaseFirestore
-
     private lateinit var btnAll: com.google.android.material.button.MaterialButton
     private lateinit var btnMyCollab: com.google.android.material.button.MaterialButton
     private lateinit var btnActive: com.google.android.material.button.MaterialButton
     private lateinit var btnRunning: com.google.android.material.button.MaterialButton
     private lateinit var btnCompleted: com.google.android.material.button.MaterialButton
-    
     private lateinit var pbCollabs: android.widget.ProgressBar
     private lateinit var llEmptyCollabs: View
-
     private var currentFilter = "All"
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.fragment_collabs, container, false)
-
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_collabs, container, false)
         db = FirebaseFirestore.getInstance()
         rvCollabProgress = view.findViewById(R.id.rvCollabRequests)
-        
         btnAll = view.findViewById(R.id.btnAllCollab)
         btnMyCollab = view.findViewById(R.id.btnMyCollab)
         btnActive = view.findViewById(R.id.btnActiveCollab)
@@ -54,14 +44,11 @@ class CollabsFragment : Fragment() {
         llEmptyCollabs = view.findViewById(R.id.llEmptyCollabs)
 
         rvCollabProgress.layoutManager = LinearLayoutManager(requireContext())
-        adapter = AdapterCollabProgress(progressList) { collab ->
-            showUpdateProgressDialog(collab)
-        }
+        adapter = AdapterCollabProgress(progressList) { showUpdateProgressDialog(it) }
         rvCollabProgress.adapter = adapter
 
         setupFilterButtons()
         loadCollaborations()
-
         return view
     }
 
@@ -82,67 +69,35 @@ class CollabsFragment : Fragment() {
     private fun updateFilterUI() {
         val activeColor = resources.getColor(R.color.green, null)
         val inactiveColor = android.graphics.Color.parseColor("#F2F4F7")
-        val activeTextColor = resources.getColor(R.color.white, null)
-        val inactiveTextColor = resources.getColor(R.color.assetgrey, null)
-
         val buttons = listOf(btnAll, btnMyCollab, btnActive, btnRunning, btnCompleted)
         val filterNames = listOf("All", "My Collabs", "Accepted", "Running", "Completed")
 
         buttons.forEachIndexed { index, button ->
-            if (filterNames[index] == currentFilter) {
-                button.backgroundTintList = android.content.res.ColorStateList.valueOf(activeColor)
-                button.setTextColor(activeTextColor)
-                button.elevation = resources.getDimension(com.intuit.sdp.R.dimen._3sdp)
-            } else {
-                button.backgroundTintList = android.content.res.ColorStateList.valueOf(inactiveColor)
-                button.setTextColor(inactiveTextColor)
-                button.elevation = resources.getDimension(com.intuit.sdp.R.dimen._2sdp)
-            }
+            val isActive = filterNames[index] == currentFilter
+            button.backgroundTintList = android.content.res.ColorStateList.valueOf(if (isActive) activeColor else inactiveColor)
+            button.setTextColor(if (isActive) resources.getColor(R.color.white, null) else resources.getColor(R.color.assetgrey, null))
         }
     }
 
     private fun showUpdateProgressDialog(collab: ModelCollabProgress) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-        
-        // Permission Check: Only participants can update
         if (collab.senderId != currentUserId && collab.receiverId != currentUserId) {
-            showToast("You don't have permission to update this project")
+            showToast("No permission")
             return
         }
-
         val options = arrayOf("Starting (25%)", "Mid (50%)", "Just Ending (75%)", "Finished (100%)")
         val progressValues = intArrayOf(25, 50, 75, 100)
-
-        android.app.AlertDialog.Builder(requireContext())
-            .setTitle("Update Project Progress")
-            .setItems(options) { _, which ->
-                val selectedProgress = progressValues[which]
-                updateCollabProgress(collab.id, selectedProgress)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        android.app.AlertDialog.Builder(requireContext()).setTitle("Update Progress").setItems(options) { _, which ->
+            updateCollabProgress(collab.id, progressValues[which])
+        }.setNegativeButton("Cancel", null).show()
     }
 
     private fun updateCollabProgress(collabId: String, newProgress: Int) {
-        val updates = hashMapOf<String, Any>(
-            "progress" to newProgress
-        )
-
-        if (newProgress == 100) {
-            updates["status"] = "Completed"
-        } else {
-            updates["status"] = "Running"
+        val updates = hashMapOf<String, Any>("progress" to newProgress)
+        updates["status"] = if (newProgress == 100) "Completed" else "Running"
+        db.collection(Constants.COLLECTION_COLLABS).document(collabId).update(updates).addOnSuccessListener {
+            showToast("Updated!")
         }
-
-        db.collection(Constants.COLLECTION_COLLABS).document(collabId)
-            .update(updates)
-            .addOnSuccessListener {
-                showToast("Progress updated successfully!")
-            }
-            .addOnFailureListener { e ->
-                Log.e("CollabsFragment", "Error updating progress", e)
-                showToast("Failed to update progress")
-            }
     }
 
     private fun loadCollaborations() {
@@ -151,83 +106,38 @@ class CollabsFragment : Fragment() {
         rvCollabProgress.visibility = View.GONE
 
         var query: com.google.firebase.firestore.Query = db.collection(Constants.COLLECTION_COLLABS)
-        
-        // If we want a specific status, filter by it in Firestore first
-        if (currentFilter != "All" && currentFilter != "My Collabs") {
-            query = query.whereEqualTo("status", currentFilter)
-        }
+        if (currentFilter != "All" && currentFilter != "My Collabs") query = query.whereEqualTo("status", currentFilter)
 
         query.addSnapshotListener { snapshots, e ->
             pbCollabs.visibility = View.GONE
-            if (e != null) {
-                Log.e("CollabsFragment", "Listen failed.", e)
+            if (e != null || snapshots == null) {
                 llEmptyCollabs.visibility = View.VISIBLE
                 return@addSnapshotListener
             }
+            progressList.clear()
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            val sortedDocs = snapshots.documents.sortedByDescending { it.getTimestamp("acceptedAt")?.toDate()?.time ?: it.getTimestamp("timestamp")?.toDate()?.time ?: 0L }
 
-            if (snapshots != null) {
-                progressList.clear()
-                val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            for (doc in sortedDocs) {
+                val sId = doc.getString("senderId") ?: ""
+                val rId = doc.getString("receiverId") ?: ""
+                val status = doc.getString("status") ?: ""
+                if (currentFilter == "All" && (status == "Completed" || status == "Declined" || status == "Pending")) continue
+                if (currentFilter == "My Collabs" && sId != currentUserId && rId != currentUserId) continue
 
-                // Convert to list and sort in memory to avoid index requirements
-                val sortedDocs = snapshots.documents.sortedByDescending { 
-                    it.getTimestamp("acceptedAt")?.toDate()?.time ?: it.getTimestamp("timestamp")?.toDate()?.time ?: 0L 
-                }
+                val sName = doc.getString("senderName") ?: "Name"
+                val rName = doc.getString("receiverName") ?: "Name"
+                val displayName = if (sId == currentUserId) "You & $rName" else if (rId == currentUserId) "$sName & You" else "$sName & $rName"
 
-                for (doc in sortedDocs) {
-                    try {
-                        val senderId = doc.getString("senderId") ?: ""
-                        val receiverId = doc.getString("receiverId") ?: ""
-                        val status = doc.getString("status") ?: ""
-                        
-                        // Filtering logic
-                        if (currentFilter == "All") {
-                            // Only show Active/Running/Accepted in "All", hide "Completed"
-                            if (status == "Completed" || status == "Declined" || status == "Pending") continue
-                        }
-
-                        if (currentFilter == "My Collabs") {
-                            if (senderId != currentUserId && receiverId != currentUserId) continue
-                        }
-
-                        val senderName = doc.getString("senderName") ?: "Name"
-                        val receiverName = doc.getString("receiverName") ?: "Name"
-                        
-                        // Create a display name like "Sarah & You" or "Sarah & Alex"
-                        val displayName = if (senderId == currentUserId) {
-                            "You & $receiverName"
-                        } else if (receiverId == currentUserId) {
-                            "$senderName & You"
-                        } else {
-                            "$senderName & $receiverName"
-                        }
-
-                        val progress = ModelCollabProgress(
-                            id = doc.id,
-                            copProfileImg1 = doc.getString("senderImage") ?: "",
-                            copProfileImg2 = doc.getString("receiverImage") ?: "",
-                            copName = displayName,
-                            copDescription = "Status: $status",
-                            copProjectTitle = doc.getString("taskTitle") ?: "Project",
-                            copCategory = status,
-                            copProgress = doc.getLong("progress")?.toInt() ?: 0,
-                            senderId = senderId,
-                            receiverId = receiverId
-                        )
-                        progressList.add(progress)
-                    } catch (ex: Exception) {
-                        Log.e("CollabsFragment", "Error parsing collab: ${ex.message}")
-                    }
-                }
-                adapter.notifyDataSetChanged()
-
-                if (progressList.isEmpty()) {
-                    llEmptyCollabs.visibility = View.VISIBLE
-                    rvCollabProgress.visibility = View.GONE
-                } else {
-                    llEmptyCollabs.visibility = View.GONE
-                    rvCollabProgress.visibility = View.VISIBLE
-                }
+                progressList.add(ModelCollabProgress(id = doc.id, copProfileImg1 = doc.getString("senderImage") ?: "", copProfileImg2 = doc.getString("receiverImage") ?: "", copName = displayName, copDescription = "Status: $status", copProjectTitle = doc.getString("taskTitle") ?: "Project", copCategory = status, copProgress = doc.getLong("progress")?.toInt() ?: 0, senderId = sId, receiverId = rId))
+            }
+            adapter.notifyDataSetChanged()
+            if (progressList.isEmpty()) {
+                llEmptyCollabs.visibility = View.VISIBLE
+                rvCollabProgress.visibility = View.GONE
+            } else {
+                llEmptyCollabs.visibility = View.GONE
+                rvCollabProgress.visibility = View.VISIBLE
             }
         }
     }

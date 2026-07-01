@@ -16,6 +16,8 @@ import com.bumptech.glide.Glide
 import com.durgesh.promoly.R
 import com.durgesh.promoly.activity.LoginActivity
 import com.durgesh.promoly.activity.ProfileInformation
+import com.durgesh.promoly.activity.NotificationSettingsActivity
+import com.durgesh.promoly.activity.PaymentMethodsActivity
 import com.durgesh.promoly.util.Constants
 import com.durgesh.promoly.util.FcmUtils
 import com.durgesh.promoly.util.showToast
@@ -31,7 +33,6 @@ class ProfileFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
-
     private lateinit var preferenceManager: PreferenceManager
 
     private lateinit var ivProfileLarge: ImageView
@@ -45,8 +46,7 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.fragment_profile, container, false)
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
@@ -59,30 +59,22 @@ class ProfileFragment : Fragment() {
         tvProfileTasksCount = view.findViewById(R.id.tvProfileTasksCount)
         tvProfileFollowersCount = view.findViewById(R.id.tvProfileFollowersCount)
 
-        val personalInfo = view.findViewById<LinearLayout>(R.id.btnPersonalInfo)
-        val notificationSettings = view.findViewById<LinearLayout>(R.id.btnNotificationSettings)
-        val paymentMethods = view.findViewById<LinearLayout>(R.id.btnPaymentMethods)
-        val logoutButton = view.findViewById<LinearLayout>(R.id.btnLogOut)
-
         loadCachedData()
         loadUserProfileData()
 
-        personalInfo.setOnClickListener {
-            val intent = Intent(requireContext(), ProfileInformation::class.java)
-            startActivity(intent)
+        view.findViewById<LinearLayout>(R.id.btnPersonalInfo).setOnClickListener {
+            startActivity(Intent(requireContext(), ProfileInformation::class.java))
         }
 
-        notificationSettings.setOnClickListener {
-            showToast("Notification Settings Clicked")
+        view.findViewById<LinearLayout>(R.id.btnNotificationSettings).setOnClickListener {
+            startActivity(Intent(requireContext(), NotificationSettingsActivity::class.java))
         }
 
-        paymentMethods.setOnClickListener {
-            val intent = Intent(requireContext(), com.durgesh.promoly.activity.PaymentMethodsActivity::class.java)
-            startActivity(intent)
+        view.findViewById<LinearLayout>(R.id.btnPaymentMethods).setOnClickListener {
+            startActivity(Intent(requireContext(), PaymentMethodsActivity::class.java))
         }
 
-        logoutButton.setOnClickListener {
-            Log.d("logout_button","Logout button was clicked")
+        view.findViewById<LinearLayout>(R.id.btnLogOut).setOnClickListener {
             preferenceManager.clear()
             FcmUtils.deleteFcmToken()
             auth.signOut()
@@ -98,16 +90,13 @@ class ProfileFragment : Fragment() {
     private fun loadCachedData() {
         tvProfileName.text = preferenceManager.getUserName()
         val bio = preferenceManager.getUserBio()
-        tvProfileBio.text = if (bio.isEmpty()) "Digital Creator & Brand Strategist." else bio
+        tvProfileBio.text = bio.ifEmpty { "Digital Creator & Brand Strategist." }
         val followers = preferenceManager.getUserFollowers()
         tvProfileFollowersCount.text = if (followers >= 1000) "${followers / 1000}k" else followers.toString()
         tvProfileTasksCount.text = preferenceManager.getTasksCount().toString()
         tvProfileCollabsCount.text = preferenceManager.getCollabsCount().toString()
 
-        val imageUrl = preferenceManager.getUserImage()
-        if (!imageUrl.isNullOrEmpty()) {
-            displayImage(imageUrl)
-        }
+        preferenceManager.getUserImage()?.let { displayImage(it) }
     }
 
     private fun loadUserProfileData() {
@@ -124,66 +113,32 @@ class ProfileFragment : Fragment() {
                     val followers = document.getLong("followers") ?: 0L
 
                     tvProfileName.text = name
-                    tvProfileBio.text = if (bio.isNullOrEmpty()) "Digital Creator & Brand Strategist." else bio
+                    tvProfileBio.text = if (bio.isEmpty()) "Digital Creator & Brand Strategist." else bio
                     tvProfileFollowersCount.text = if (followers >= 1000) "${followers/1000}k" else followers.toString()
 
                     preferenceManager.saveUserProfile(name, bio, imageUrl, followers)
-
-                    if (!imageUrl.isNullOrEmpty()) {
-                        displayImage(imageUrl)
-                    }
-                }
-            }
-            .addOnFailureListener { e ->
-                if (isAdded) {
-                    showToast("Failed to load profile: ${e.message}")
+                    imageUrl?.let { displayImage(it) }
                 }
             }
             
-        // Load counts
         loadStatCounts(currentUserId)
     }
 
     private fun displayImage(imageUrl: String) {
         if (imageUrl.startsWith("http")) {
-            // Legacy URL fallback
-            Glide.with(this)
-                .load(imageUrl)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: com.bumptech.glide.request.target.Target<Drawable?>,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        model: Any,
-                        target: com.bumptech.glide.request.target.Target<Drawable?>?,
-                        dataSource: DataSource,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-                })
-                .into(ivProfileLarge)
+            Glide.with(this).load(imageUrl).into(ivProfileLarge)
         } else {
-            // Decode and load Base64 string
             try {
                 val imageBytes = Base64.decode(imageUrl, Base64.DEFAULT)
                 val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                 ivProfileLarge.setImageBitmap(decodedImage)
             } catch (e: Exception) {
-                Log.e("ProfileFragment", "Error decoding base64 image", e)
+                ivProfileLarge.setImageResource(R.drawable.user)
             }
         }
     }
 
     private fun loadStatCounts(userId: String) {
-        // 1. Total Tasks count
         db.collection(Constants.COLLECTION_TASKS)
             .whereEqualTo("userId", userId)
             .get()
@@ -195,7 +150,6 @@ class ProfileFragment : Fragment() {
                 }
             }
 
-        // 2. Total Completed Collabs count
         db.collection(Constants.COLLECTION_COLLABS)
             .whereEqualTo("status", "Completed")
             .get()

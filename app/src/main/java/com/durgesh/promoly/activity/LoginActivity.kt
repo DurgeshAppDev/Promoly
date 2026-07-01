@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -32,15 +31,9 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-
     private lateinit var loginUsername: EditText
     private lateinit var loginPassword: EditText
     private lateinit var loginBtn: Button
-    private lateinit var cbRemember: CheckBox
-    private lateinit var loginWithGoogle: TextView
-    private lateinit var loginWithFacebook: TextView
-    private lateinit var textRegister: TextView
-    private lateinit var textForgotPass: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +46,8 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
-        // Persistent Login Check: Skip login screen if user is already authenticated
         if (auth.currentUser != null) {
             startActivity(Intent(this, HomeActivity::class.java))
             finish()
@@ -65,27 +56,18 @@ class LoginActivity : AppCompatActivity() {
         loginUsername = findViewById(R.id.loginUsername)
         loginPassword = findViewById(R.id.loginPassword)
         loginBtn = findViewById(R.id.loginbtn)
-        cbRemember = findViewById(R.id.cbRemember)
-        loginWithGoogle = findViewById(R.id.loginWithGoogle)
-        loginWithFacebook = findViewById(R.id.loginWithFacebook)
-        textRegister = findViewById(R.id.textRegister)
-        textForgotPass = findViewById(R.id.loginforgotpass)
 
-        // Email & Password Login Button Click
-        // Email & Password Login Button Click
         loginBtn.setOnClickListener {
             val email = loginUsername.text.toString().trim()
             val password = loginPassword.text.toString().trim()
 
             if (email.isEmpty()) {
                 loginUsername.error = "Enter Email Address"
-                loginUsername.requestFocus()
                 return@setOnClickListener
             }
 
             if (password.isEmpty()) {
                 loginPassword.error = "Enter Password"
-                loginPassword.requestFocus()
                 return@setOnClickListener
             }
 
@@ -94,42 +76,32 @@ class LoginActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         val user = auth.currentUser
                         if (user != null) {
-                            // Check if the user document exists in Firestore, or create/initialize it if missing
                             checkAndInitializeUserData(user.uid, email)
                         }
                     } else {
-                        showToast("Authentication Failed: ${task.exception?.message}", Toast.LENGTH_LONG)
+                        showToast("Failed: ${task.exception?.message}")
                     }
                 }
         }
 
-        // Modern Google Login Handler
-        loginWithGoogle.setOnClickListener {
+        findViewById<TextView>(R.id.loginWithGoogle).setOnClickListener {
             signInWithGoogle()
         }
 
-        // Facebook Login
-        loginWithFacebook.setOnClickListener {
-            showToast("Facebook Login Clicked")
-        }
-
-        textForgotPass.setOnClickListener {
+        findViewById<TextView>(R.id.loginforgotpass).setOnClickListener {
             startActivity(Intent(this, OtpActivity::class.java))
         }
 
-        // Navigate to Register Activity
-        textRegister.setOnClickListener {
+        findViewById<TextView>(R.id.textRegister).setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
-    // Google Sign-In with Credential Manager API
     private fun signInWithGoogle() {
         val credentialManager = CredentialManager.create(this)
-
         val googleIdOption = GetGoogleIdOption.Builder()
             .setServerClientId(getString(R.string.default_web_client_id))
-            .setFilterByAuthorizedAccounts(false) // Prompt selector even if single account remains
+            .setFilterByAuthorizedAccounts(false)
             .setAutoSelectEnabled(false)
             .build()
 
@@ -141,16 +113,12 @@ class LoginActivity : AppCompatActivity() {
             try {
                 val result = credentialManager.getCredential(this@LoginActivity, request)
                 val credential = result.credential
-
                 if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                     val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                     firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
-                } else {
-                    Log.w(TAG, "Unexpected credential token type received")
                 }
             } catch (e: GetCredentialException) {
-                Log.w(TAG, "Credential Manager failure", e)
-                showToast("Google Sign-In failed: ${e.message}")
+                showToast("Google Sign-In failed")
             }
         }
     }
@@ -162,39 +130,12 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null) {
-                        // Safely check if user exists before creating a new document
                         checkAndInitializeUserData(user.uid, user.email ?: "", user.displayName ?: "Name")
                         FcmUtils.updateFcmToken()
                     }
                 } else {
-                    Log.w(TAG, "Firebase context link failed", task.exception)
-                    showToast("Firebase Identity Link Failed.")
+                    showToast("Authentication Failed.")
                 }
-            }
-    }
-
-    private fun saveUserToDatabase(userId: String, name: String, email: String) {
-        // 1. Initialize Firestore Instance
-        val db = FirebaseFirestore.getInstance()
-
-        // 2. Map out your user payload
-        val userMap = HashMap<String, Any>()
-        userMap["uid"] = userId
-        userMap["name"] = name
-        userMap["email"] = email
-
-        // 3. Save to a "Users" collection using the unique userId as the Document ID
-        db.collection(Constants.COLLECTION_USERS)
-            .document(userId)
-            .set(userMap)
-            .addOnSuccessListener {
-                showToast("Registration Successful")
-                // Fixed: Takes the authenticated user directly into the main app experience
-                startActivity(Intent(this, HomeActivity::class.java))
-                finish()
-            }
-            .addOnFailureListener { e ->
-                showToast("Firestore error: ${e.message}")
             }
     }
 
@@ -204,13 +145,11 @@ class LoginActivity : AppCompatActivity() {
 
         userDocRef.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
-                // User document already exists, DO NOT overwrite. Proceed to Home.
                 showToast("Welcome back!")
                 FcmUtils.updateFcmToken()
                 startActivity(Intent(this, HomeActivity::class.java))
                 finish()
             } else {
-                // If the document doesn't exist, create it (New registration via Google or first-time Email login)
                 val userMap = HashMap<String, Any>()
                 userMap["uid"] = userId
                 userMap["name"] = providedName ?: email.substringBefore("@")
@@ -228,11 +167,11 @@ class LoginActivity : AppCompatActivity() {
                         finish()
                     }
                     .addOnFailureListener { e ->
-                        showToast("Failed to initialize user document: ${e.message}")
+                        showToast("Initialization error: ${e.message}")
                     }
             }
         }.addOnFailureListener { e ->
-            showToast("Firestore check failed: ${e.message}")
+            showToast("Failed to verify account")
         }
     }
 }

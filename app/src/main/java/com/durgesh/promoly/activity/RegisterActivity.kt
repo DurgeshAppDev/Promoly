@@ -30,17 +30,11 @@ import kotlinx.coroutines.launch
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-
     private lateinit var fullName: EditText
     private lateinit var email: EditText
     private lateinit var password: EditText
     private lateinit var confirmPassword: EditText
-
     private lateinit var registerBtn: Button
-
-    private lateinit var googleRegister: TextView
-    private lateinit var facebookRegister: TextView
-    private lateinit var textLogin: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,12 +51,7 @@ class RegisterActivity : AppCompatActivity() {
         email = findViewById(R.id.registerEmail)
         password = findViewById(R.id.registerPassword)
         confirmPassword = findViewById(R.id.registerConfirmPassword)
-
         registerBtn = findViewById(R.id.registerbtn)
-
-        googleRegister = findViewById(R.id.RegisterWithGoogle)
-        facebookRegister = findViewById(R.id.registerWithFacebook)
-        textLogin = findViewById(R.id.textLogin)
 
         auth = FirebaseAuth.getInstance()
 
@@ -72,7 +61,6 @@ class RegisterActivity : AppCompatActivity() {
             val pass = password.text.toString().trim()
             val confirmPass = confirmPassword.text.toString().trim()
 
-            // Validation
             if (name.isEmpty()) {
                 fullName.error = "Enter Full Name"
                 return@setOnClickListener
@@ -86,53 +74,44 @@ class RegisterActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             if (pass.length < 8) {
-                password.error = "Password must be at least 8 characters"
+                password.error = "Min 8 characters"
                 return@setOnClickListener
             }
             if (pass != confirmPass) {
-                confirmPassword.error = "Passwords do not match"
+                confirmPassword.error = "No Match"
                 return@setOnClickListener
             }
 
             registerUser(name, emailText, pass)
         }
 
-        googleRegister.setOnClickListener {
+        findViewById<TextView>(R.id.RegisterWithGoogle).setOnClickListener {
             signInWithGoogle()
         }
 
-        facebookRegister.setOnClickListener {
-            showToast("Facebook Registration Clicked")
-        }
-
-        textLogin.setOnClickListener {
-            // Adjust package target if your LoginActivity is in the same .activity package
+        findViewById<TextView>(R.id.textLogin).setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
     }
 
-
-    private fun registerUser(name: String, email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password)
+    private fun registerUser(name: String, email: String, pass: String) {
+        auth.createUserWithEmailAndPassword(email, pass)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val userId = auth.currentUser!!.uid
                     saveUserToDatabase(userId, name, email)
                 } else {
-                    showToast(task.exception?.message ?: "Unknown error", Toast.LENGTH_LONG)
+                    showToast(task.exception?.message ?: "Registration failed")
                 }
             }
     }
 
-    // Google sign in setup
     private fun signInWithGoogle() {
         val credentialManager = CredentialManager.create(this)
-
-        // Setup the modern Google ID request option
         val googleIdOption = GetGoogleIdOption.Builder()
             .setServerClientId(getString(R.string.default_web_client_id))
-            .setFilterByAuthorizedAccounts(false) // Shows all Google accounts on the device
+            .setFilterByAuthorizedAccounts(false)
             .setAutoSelectEnabled(false)
             .build()
 
@@ -140,23 +119,16 @@ class RegisterActivity : AppCompatActivity() {
             .addCredentialOption(googleIdOption)
             .build()
 
-        // Credential Manager executes using Coroutines asynchronously
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val result = credentialManager.getCredential(this@RegisterActivity, request)
                 val credential = result.credential
-
                 if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                     val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-
-                    // Pass the verified token directly to Firebase
                     firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
-                } else {
-                    Log.w(TAG, "Unexpected credential type returned")
                 }
             } catch (e: GetCredentialException) {
-                Log.w(TAG, "Google Sign-In failed via Credential Manager", e)
-                showToast("Sign-In failed: ${e.message}")
+                showToast("Sign-In failed")
             }
         }
     }
@@ -166,19 +138,15 @@ class RegisterActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
                     if (user != null) {
-                        // Check if user already exists to avoid overwriting their profile data
                         checkAndInitializeUserData(user.uid, user.email ?: "", user.displayName ?: "Name")
                     }
                 } else {
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
                     showToast("Authentication Failed.")
                 }
             }
     }
-
 
     private fun checkAndInitializeUserData(userId: String, email: String, providedName: String) {
         val db = FirebaseFirestore.getInstance()
@@ -186,29 +154,21 @@ class RegisterActivity : AppCompatActivity() {
 
         userDocRef.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
-                // User already exists, just go to Home
                 showToast("Welcome back!")
                 val intent = Intent(this, HomeActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
                 finish()
             } else {
-                // New user registration via Google
                 saveUserToDatabase(userId, providedName, email)
             }
         }.addOnFailureListener { e ->
-            Log.e("FIRESTORE_ERR", "Error checking document", e)
-            // Fallback: try to save anyway if check fails, but maybe safer to just error?
-            // saveUserToDatabase(userId, providedName, email)
-            showToast("Failed to verify user data. Please try again.")
+            showToast("Failed to verify account")
         }
     }
 
-
     private fun saveUserToDatabase(userId: String, name: String, email: String) {
         val db = FirebaseFirestore.getInstance()
-
-        // Match the complete structural payload you expect to update later
         val userMap = HashMap<String, Any>()
         userMap["uid"] = userId
         userMap["name"] = name
@@ -223,15 +183,12 @@ class RegisterActivity : AppCompatActivity() {
             .set(userMap)
             .addOnSuccessListener {
                 showToast("Registration Successful!")
-
-                // FIX: Navigate directly to HomeActivity because they are already logged in!
                 val intent = Intent(this, HomeActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
                 finish()
             }
             .addOnFailureListener { e ->
-                Log.e("FIRESTORE_ERR", "Error setting document", e)
                 showToast("Firestore error: ${e.message}")
             }
     }

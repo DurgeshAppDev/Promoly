@@ -26,41 +26,35 @@ object FcmNotificationSender {
         db.collection(Constants.COLLECTION_USERS).document(receiverId).get()
             .addOnSuccessListener { document ->
                 val fcmToken = document.getString("fcmToken")
+                
+                val isEnabled = when (type) {
+                    "collab_request" -> document.getBoolean(PreferenceManager.KEY_NOTIF_COLLAB_REQUESTS) ?: true
+                    "chat" -> document.getBoolean(PreferenceManager.KEY_NOTIF_MESSAGES) ?: true
+                    "collab_accept" -> document.getBoolean(PreferenceManager.KEY_NOTIF_COLLAB_UPDATES) ?: true
+                    else -> true
+                }
+
+                if (!isEnabled) return@addOnSuccessListener
+
                 if (!fcmToken.isNullOrEmpty()) {
-                    // We need to run network/IO operations on a background thread
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             executeSend(context, fcmToken, title, message, type, currentUserId)
                         } catch (e: Exception) {
-                            Log.e("FcmSender", "Error in executeSend", e)
+                            Log.e("FcmSender", "Error: ${e.message}")
                         }
                     }
-                } else {
-                    Log.w("FcmSender", "Receiver has no FCM token")
                 }
-            }
-            .addOnFailureListener { e ->
-                Log.e("FcmSender", "Error fetching receiver token", e)
             }
     }
 
     private suspend fun executeSend(context: Context, token: String, title: String, message: String, type: String, senderId: String) {
-        // 1. Get Access Token from Service Account JSON
-        val accessToken = withContext(Dispatchers.IO) {
-            getAccessToken(context)
-        } ?: return
-
-        // 2. Get Project ID from Service Account JSON
-        val projectId = withContext(Dispatchers.IO) {
-            getProjectId(context)
-        } ?: return
-
+        val accessToken = withContext(Dispatchers.IO) { getAccessToken(context) } ?: return
+        val projectId = withContext(Dispatchers.IO) { getProjectId(context) } ?: return
         val url = "$BASE_URL$projectId/messages:send"
-        
         val client = OkHttpClient()
         val mediaType = "application/json; charset=utf-8".toMediaType()
 
-        // Construct FCM V1 Payload
         val json = JSONObject()
         val messageObj = JSONObject()
         val notificationObj = JSONObject()
@@ -84,7 +78,6 @@ object FcmNotificationSender {
         messageObj.put("notification", notificationObj)
         messageObj.put("data", dataObj)
         messageObj.put("android", androidObj)
-        
         json.put("message", messageObj)
 
         val requestBody = json.toString().toRequestBody(mediaType)
@@ -96,15 +89,8 @@ object FcmNotificationSender {
             .build()
 
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("FcmSender", "Failed to send notification", e)
-            }
-
+            override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
-                Log.d("FcmSender", "Notification sent status: ${response.code}")
-                if (!response.isSuccessful) {
-                    Log.e("FcmSender", "Response body: ${response.body?.string()}")
-                }
                 response.close()
             }
         })
@@ -113,12 +99,10 @@ object FcmNotificationSender {
     private fun getAccessToken(context: Context): String? {
         return try {
             val stream = context.assets.open("service-account.json")
-            val credentials = GoogleCredentials.fromStream(stream)
-                .createScoped(listOf(SCOPE))
+            val credentials = GoogleCredentials.fromStream(stream).createScoped(listOf(SCOPE))
             credentials.refreshIfExpired()
             credentials.accessToken.tokenValue
         } catch (e: Exception) {
-            Log.e("FcmSender", "Error getting access token: ${e.message}")
             null
         }
     }
@@ -130,7 +114,6 @@ object FcmNotificationSender {
             val jsonObject = JSONObject(jsonString)
             jsonObject.getString("project_id")
         } catch (e: Exception) {
-            Log.e("FcmSender", "Error getting project ID: ${e.message}")
             null
         }
     }

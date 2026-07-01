@@ -4,9 +4,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -30,7 +28,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
 class ViewProfile : AppCompatActivity() {
-    private lateinit var ivBack: ImageButton
     private lateinit var ivProfileImage: ImageView
     private lateinit var tvProfileName: TextView
     private lateinit var tvProfileBio: TextView
@@ -39,13 +36,10 @@ class ViewProfile : AppCompatActivity() {
     private lateinit var tvProfileTasksCount: TextView
     private lateinit var rvCollabs: RecyclerView
     private lateinit var rvTasks: RecyclerView
-
     private lateinit var collabAdapter: AdapterCollabProgress
     private lateinit var taskAdapter: AdapterTasksPriority
-    
     private val collabList = mutableListOf<ModelCollabProgress>()
     private val taskList = mutableListOf<ModelTaskPriority>()
-
     private lateinit var db: FirebaseFirestore
     private var profileUserId: String? = null
 
@@ -71,39 +65,30 @@ class ViewProfile : AppCompatActivity() {
     }
 
     private fun initViews() {
-        ivBack = findViewById(R.id.btnBack)
         ivProfileImage = findViewById(R.id.ivProfileImage)
         tvProfileName = findViewById(R.id.tvProfileName)
         tvProfileBio = findViewById(R.id.tvProfileBio)
         tvProfileCollabsCount = findViewById(R.id.tvProfileCollabsCount)
         tvProfileFollowersCount = findViewById(R.id.tvProfileFollowersCount)
         tvProfileTasksCount = findViewById(R.id.tvProfileTasksCount)
+        rvCollabs = findViewById(R.id.rvCollabRequests)
+        rvTasks = findViewById(R.id.rvTaskPrioritiesProfile)
         
         val btnFollow = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnFollow)
         val btnMessage = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnMessage)
 
-        rvCollabs = findViewById(R.id.rvCollabRequests)
-        rvTasks = findViewById(R.id.rvTaskPrioritiesProfile)
+        findViewById<ImageButton>(R.id.btnBack).setOnClickListener { onBackPressed() }
 
-        ivBack.setOnClickListener {
-            onBackPressed()
-        }
-
-        // Hide follow/message if viewing own profile
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         if (profileUserId == currentUserId) {
             btnFollow.text = "Edit Profile"
             btnMessage.visibility = View.GONE
             btnFollow.setOnClickListener {
-                startActivity(android.content.Intent(this, ProfileInformation::class.java))
+                startActivity(Intent(this, ProfileInformation::class.java))
             }
         } else {
-            // Check current follow status
             checkFollowStatus(btnFollow)
-            
-            btnFollow.setOnClickListener {
-                toggleFollow(btnFollow)
-            }
+            btnFollow.setOnClickListener { toggleFollow(btnFollow) }
             btnMessage.setOnClickListener {
                 val intent = Intent(this, ChatRoomActivity::class.java)
                 intent.putExtra("receiverId", profileUserId)
@@ -114,28 +99,21 @@ class ViewProfile : AppCompatActivity() {
 
     private fun checkFollowStatus(button: com.google.android.material.button.MaterialButton) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        db.collection(Constants.COLLECTION_FOLLOWERS)
-            .document(profileUserId!!)
-            .collection("UserFollowers")
-            .document(currentUserId)
+        db.collection(Constants.COLLECTION_FOLLOWERS).document(profileUserId!!).collection("UserFollowers").document(currentUserId)
             .addSnapshotListener { snapshot, _ ->
-                if (snapshot != null && snapshot.exists()) {
-                    setFollowingUI(button)
-                } else {
-                    setFollowUI(button)
-                }
+                if (snapshot != null && snapshot.exists()) setFollowingUI(button) else setFollowUI(button)
             }
     }
 
     private fun setFollowingUI(button: com.google.android.material.button.MaterialButton) {
         button.text = "Following"
-        button.setBackgroundTintList(android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#F2F4F7")))
+        button.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#F2F4F7"))
         button.setTextColor(resources.getColor(R.color.assetgrey, null))
     }
 
     private fun setFollowUI(button: com.google.android.material.button.MaterialButton) {
         button.text = "Follow"
-        button.setBackgroundTintList(android.content.res.ColorStateList.valueOf(resources.getColor(R.color.green, null)))
+        button.backgroundTintList = android.content.res.ColorStateList.valueOf(resources.getColor(R.color.green, null))
         button.setTextColor(android.graphics.Color.WHITE)
     }
 
@@ -145,38 +123,23 @@ class ViewProfile : AppCompatActivity() {
         val followerRef = profileRef.collection("UserFollowers").document(currentUserId)
 
         if (button.text == "Follow") {
-            // Follow
-            val data = hashMapOf<String, Any>(
-                "timestamp" to FieldValue.serverTimestamp()
-            )
-            followerRef.set(data).addOnSuccessListener {
-                // Update follower count in User document
-                db.collection(Constants.COLLECTION_USERS).document(profileUserId!!)
-                    .update("followers", FieldValue.increment(1))
+            followerRef.set(hashMapOf("timestamp" to FieldValue.serverTimestamp())).addOnSuccessListener {
+                db.collection(Constants.COLLECTION_USERS).document(profileUserId!!).update("followers", FieldValue.increment(1))
             }
         } else {
-            // Unfollow
             followerRef.delete().addOnSuccessListener {
-                // Update follower count in User document
-                db.collection(Constants.COLLECTION_USERS).document(profileUserId!!)
-                    .update("followers", FieldValue.increment(-1))
+                db.collection(Constants.COLLECTION_USERS).document(profileUserId!!).update("followers", FieldValue.increment(-1))
             }
         }
     }
 
     private fun setupRecyclerViews() {
-        // Collabs - Horizontal as requested
         rvCollabs.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        collabAdapter = AdapterCollabProgress(collabList) { collab ->
-            // Handle click if needed
-        }
+        collabAdapter = AdapterCollabProgress(collabList) {}
         rvCollabs.adapter = collabAdapter
 
-        // Tasks - Vertical
         rvTasks.layoutManager = LinearLayoutManager(this)
-        taskAdapter = AdapterTasksPriority(taskList, FirebaseAuth.getInstance().currentUser?.uid ?: "") { task ->
-            // Handle request click if needed (though usually we don't send requests from profile view of others? or we do?)
-        }
+        taskAdapter = AdapterTasksPriority(taskList, FirebaseAuth.getInstance().currentUser?.uid ?: "") {}
         rvTasks.adapter = taskAdapter
     }
 
@@ -188,114 +151,62 @@ class ViewProfile : AppCompatActivity() {
                     val bio = doc.getString("bio") ?: ""
                     val imageUrl = doc.getString("profileImageUrl")
                     val followers = doc.getLong("followers") ?: 0L
-
                     tvProfileName.text = name
-                    tvProfileBio.text = if (bio.isEmpty()) "Digital Creator & Brand Strategist." else bio
+                    tvProfileBio.text = bio.ifEmpty { "Digital Creator & Brand Strategist." }
                     tvProfileFollowersCount.text = if (followers >= 1000) "${followers/1000}k" else followers.toString()
-
-                    if (!imageUrl.isNullOrEmpty()) {
-                        if (imageUrl.startsWith("http")) {
-                            Glide.with(this).load(imageUrl).placeholder(R.drawable.user).into(ivProfileImage)
-                        } else {
-                            try {
-                                val imageBytes = Base64.decode(imageUrl, Base64.DEFAULT)
-                                val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                                ivProfileImage.setImageBitmap(decodedImage)
-                            } catch (e: Exception) {
-                                ivProfileImage.setImageResource(R.drawable.user)
-                            }
-                        }
-                    }
+                    imageUrl?.let { displayImage(it) }
                 }
             }
+    }
+
+    private fun displayImage(imageUrl: String) {
+        if (imageUrl.startsWith("http")) Glide.with(this).load(imageUrl).placeholder(R.drawable.user).into(ivProfileImage)
+        else {
+            try {
+                val imageBytes = Base64.decode(imageUrl, Base64.DEFAULT)
+                val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                ivProfileImage.setImageBitmap(decodedImage)
+            } catch (e: Exception) {
+                ivProfileImage.setImageResource(R.drawable.user)
+            }
+        }
     }
 
     private fun loadCollabs() {
-        db.collection(Constants.COLLECTION_COLLABS)
-            .addSnapshotListener { snapshots, e ->
-                if (e != null) return@addSnapshotListener
-                
-                if (snapshots != null) {
-                    collabList.clear()
-                    var completedCount = 0
-                    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-                    
-                    for (doc in snapshots) {
-                        val senderId = doc.getString("senderId") ?: ""
-                        val receiverId = doc.getString("receiverId") ?: ""
-                        val status = doc.getString("status") ?: ""
-                        
-                        // Check if profile user is involved
-                        if (senderId == profileUserId || receiverId == profileUserId) {
-                            
-                            // Only add to list if it's an active/completed collab (not pending/declined)
-                            if (status == "Accepted" || status == "Running" || status == "Completed") {
-                                val senderName = doc.getString("senderName") ?: "Name"
-                                val receiverName = doc.getString("receiverName") ?: "Name"
-
-                                val displayName = if (senderId == currentUserId) {
-                                    "You & $receiverName"
-                                } else if (receiverId == currentUserId) {
-                                    "$senderName & You"
-                                } else {
-                                    "$senderName & $receiverName"
-                                }
-
-                                collabList.add(ModelCollabProgress(
-                                    id = doc.id,
-                                    copProfileImg1 = doc.getString("senderImage") ?: "",
-                                    copProfileImg2 = doc.getString("receiverImage") ?: "",
-                                    copName = displayName,
-                                    copDescription = "Status: $status",
-                                    copProjectTitle = doc.getString("taskTitle") ?: "Project",
-                                    copCategory = status,
-                                    copProgress = doc.getLong("progress")?.toInt() ?: 0,
-                                    senderId = senderId,
-                                    receiverId = receiverId
-                                ))
-                                
-                                if (status == "Completed") {
-                                    completedCount++
-                                }
-                            }
-                        }
+        db.collection(Constants.COLLECTION_COLLABS).addSnapshotListener { snapshots, e ->
+            if (e != null || snapshots == null) return@addSnapshotListener
+            collabList.clear()
+            var completedCount = 0
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+            for (doc in snapshots) {
+                val sId = doc.getString("senderId") ?: ""
+                val rId = doc.getString("receiverId") ?: ""
+                val status = doc.getString("status") ?: ""
+                if (sId == profileUserId || rId == profileUserId) {
+                    if (status == "Accepted" || status == "Running" || status == "Completed") {
+                        val sName = doc.getString("senderName") ?: "Name"
+                        val rName = doc.getString("receiverName") ?: "Name"
+                        val displayName = if (sId == currentUserId) "You & $rName" else if (rId == currentUserId) "$sName & You" else "$sName & $rName"
+                        collabList.add(ModelCollabProgress(id = doc.id, copProfileImg1 = doc.getString("senderImage") ?: "", copProfileImg2 = doc.getString("receiverImage") ?: "", copName = displayName, copDescription = "Status: $status", copProjectTitle = doc.getString("taskTitle") ?: "Project", copCategory = status, copProgress = doc.getLong("progress")?.toInt() ?: 0, senderId = sId, receiverId = rId))
+                        if (status == "Completed") completedCount++
                     }
-                    collabAdapter.notifyDataSetChanged()
-                    tvProfileCollabsCount.text = completedCount.toString()
                 }
             }
+            collabAdapter.notifyDataSetChanged()
+            tvProfileCollabsCount.text = completedCount.toString()
+        }
     }
 
     private fun loadTasks() {
-        db.collection(Constants.COLLECTION_TASKS)
-            .whereEqualTo("userId", profileUserId)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
+        db.collection(Constants.COLLECTION_TASKS).whereEqualTo("userId", profileUserId).orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
-                if (e != null) return@addSnapshotListener
-
-                if (snapshots != null) {
-                    taskList.clear()
-                    for (doc in snapshots) {
-                        val task = ModelTaskPriority(
-                            id = doc.id,
-                            userId = doc.getString("userId") ?: "",
-                            userName = doc.getString("userName") ?: "Name",
-                            userProfileImage = doc.getString("userProfileImage") ?: "",
-                            priority = doc.getString("priority") ?: "Medium Priority",
-                            category = doc.getString("category") ?: "",
-                            title = doc.getString("projectTitle") ?: "",
-                            description = doc.getString("description") ?: "",
-                            timeline = doc.getString("timeline") ?: "",
-                            budget = doc.getString("budget") ?: "",
-                            progress = doc.getLong("progress")?.toInt() ?: 0,
-                            status = doc.getString("status") ?: "Active",
-                            skills = doc.get("skills") as? List<String> ?: emptyList()
-                        )
-                        taskList.add(task)
-                    }
-                    taskAdapter.notifyDataSetChanged()
-                    tvProfileTasksCount.text = taskList.size.toString()
+                if (e != null || snapshots == null) return@addSnapshotListener
+                taskList.clear()
+                for (doc in snapshots) {
+                    taskList.add(ModelTaskPriority(id = doc.id, userId = doc.getString("userId") ?: "", userName = doc.getString("userName") ?: "Name", userProfileImage = doc.getString("userProfileImage") ?: "", priority = doc.getString("priority") ?: "Medium Priority", category = doc.getString("category") ?: "", title = doc.getString("projectTitle") ?: "", description = doc.getString("description") ?: "", timeline = doc.getString("timeline") ?: "", budget = doc.getString("budget") ?: "", progress = doc.getLong("progress")?.toInt() ?: 0, status = doc.getString("status") ?: "Active", skills = doc.get("skills") as? List<String> ?: emptyList()))
                 }
+                taskAdapter.notifyDataSetChanged()
+                tvProfileTasksCount.text = taskList.size.toString()
             }
     }
 }

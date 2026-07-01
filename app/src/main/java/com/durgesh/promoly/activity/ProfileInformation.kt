@@ -14,7 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.bumptech.glide.Glide // Optional: Highly recommended for loading URLs into ImageViews
+import com.bumptech.glide.Glide
 import com.durgesh.promoly.R
 import com.durgesh.promoly.util.Constants
 import com.durgesh.promoly.util.PreferenceManager
@@ -45,12 +45,8 @@ class ProfileInformation : AppCompatActivity() {
     private lateinit var btnChangeImage: MaterialCardView
 
     private var uploadedImageUrl: String? = null
-
-    private var selectedImageUri: Uri? = null
     private var base64ImageString: String? = null
-    private var selectedImageBytes: ByteArray? = null
 
-    // Image Cropper Contract
     private val cropImage = registerForActivityResult(CropImageContract()) { result ->
         if (result.isSuccessful) {
             val uriContent = result.uriContent
@@ -59,26 +55,20 @@ class ProfileInformation : AppCompatActivity() {
                     val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uriContent))
                     if (bitmap != null) {
                         ivEditProfileImage.setImageBitmap(bitmap)
-
                         val byteArrayOutputStream = ByteArrayOutputStream()
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
-                        selectedImageBytes = byteArrayOutputStream.toByteArray()
+                        val selectedImageBytes = byteArrayOutputStream.toByteArray()
                         base64ImageString = Base64.encodeToString(selectedImageBytes, Base64.DEFAULT)
                     }
                 } catch (e: Exception) {
-                    showToast("Failed to process cropped image: ${e.message}")
+                    showToast("Failed to process cropped image")
                 }
             }
-        } else {
-            val error = result.error
-            error?.let { showToast("Cropping failed: ${it.message}") }
         }
     }
 
-    // Photo Picker Contract to grab an image from the gallery
     private val getImageContract = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         if (uri != null) {
-            // Start cropping after selecting an image
             val cropOptions = CropImageContractOptions(
                 uri,
                 CropImageOptions().apply {
@@ -108,12 +98,10 @@ class ProfileInformation : AppCompatActivity() {
             insets
         }
 
-        // Initialize Firebase instances
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
         preferenceManager = PreferenceManager(this)
 
-        // Bind Views
         btnBackInfo = findViewById(R.id.btnBackInfo)
         etFullName = findViewById(R.id.etFullName)
         etEmail = findViewById(R.id.etEmail)
@@ -128,17 +116,13 @@ class ProfileInformation : AppCompatActivity() {
 
         btnBackInfo.setOnClickListener { finish() }
         btnCancel.setOnClickListener { finish() }
-
-        // Trigger gallery picker when clicking the edit image buttons
         btnChangeImage.setOnClickListener { getImageContract.launch("image/*") }
         findViewById<TextView>(R.id.tvChangePhoto).setOnClickListener { getImageContract.launch("image/*") }
 
-        // Update this inside your onCreate method in ProfileInformation.kt
         btnSaveChanges.setOnClickListener {
             val fullName = etFullName.text.toString().trim()
             val emailText = etEmail.text.toString().trim()
 
-            // 1. Mandatory Text Validations
             if (fullName.isEmpty()) {
                 etFullName.error = "Full Name is required"
                 return@setOnClickListener
@@ -148,7 +132,6 @@ class ProfileInformation : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Direct save to Firestore (No-cost friendly)
             saveProfileInformation()
         }
     }
@@ -166,14 +149,11 @@ class ProfileInformation : AppCompatActivity() {
                     etBio.setText(document.getString("bio") ?: "")
                     etPhone.setText(document.getString("phone") ?: "")
 
-                    // Retrieve existing profile image link or base64
                     uploadedImageUrl = document.getString("profileImageUrl")
                     if (!uploadedImageUrl.isNullOrEmpty()) {
                         if (uploadedImageUrl!!.startsWith("http")) {
-                            // Legacy URL fallback
                             Glide.with(this).load(uploadedImageUrl).into(ivEditProfileImage)
                         } else {
-                            // Decode and load Base64 string
                             try {
                                 val imageBytes = Base64.decode(uploadedImageUrl, Base64.DEFAULT)
                                 val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
@@ -203,31 +183,27 @@ class ProfileInformation : AppCompatActivity() {
         updatesMap["updatedAt"] = FieldValue.serverTimestamp()
 
         val finalImageUrl = base64ImageString ?: uploadedImageUrl
-
-        // If a new image was selected and encoded, save its Base64 string
         if (base64ImageString != null) {
             updatesMap["profileImageUrl"] = base64ImageString!!
         }
 
-        showToast("Saving Profile Changes...")
+        showToast("Saving Changes...")
         btnSaveChanges.isEnabled = false
 
         db.collection(Constants.COLLECTION_USERS)
             .document(currentUserId)
             .update(updatesMap)
             .addOnSuccessListener {
-                // Update local cache
                 val currentFollowers = preferenceManager.getUserFollowers()
                 preferenceManager.saveUserProfile(name, bio, finalImageUrl, currentFollowers)
 
-                // Now update denormalized data and wait for completion before finishing
                 updateDenormalizedUserData(currentUserId, name, finalImageUrl) {
-                    showToast("Profile Updated Everywhere!")
+                    showToast("Profile Updated!")
                     finish()
                 }
             }
             .addOnFailureListener { e ->
-                showToast("Error saving data: ${e.message}")
+                showToast("Error: ${e.message}")
                 btnSaveChanges.isEnabled = true
             }
     }
@@ -235,7 +211,6 @@ class ProfileInformation : AppCompatActivity() {
     private fun updateDenormalizedUserData(userId: String, newName: String, newImageUrl: String?, onComplete: () -> Unit) {
         val db = FirebaseFirestore.getInstance()
 
-        // 1. Update Tasks where the user is the owner
         val taskUpdate = db.collection(Constants.COLLECTION_TASKS)
             .whereEqualTo("userId", userId)
             .get()
@@ -249,7 +224,6 @@ class ProfileInformation : AppCompatActivity() {
                 batch.commit()
             }
 
-        // 2. Update Collabs where the user is the Sender
         val collabSenderUpdate = db.collection(Constants.COLLECTION_COLLABS)
             .whereEqualTo("senderId", userId)
             .get()
@@ -263,14 +237,12 @@ class ProfileInformation : AppCompatActivity() {
                 batch.commit()
             }
 
-        // 3. Update Collabs where the user is the Receiver
         val collabReceiverUpdate = db.collection(Constants.COLLECTION_COLLABS)
             .whereEqualTo("receiverId", userId)
             .get()
             .continueWithTask { task ->
                 val batch = db.batch()
                 for (doc in task.result.documents) {
-                    // Only update if receiver info exists (accepted collabs)
                     if (doc.contains("receiverName")) {
                         val collabUpdates = hashMapOf<String, Any>("receiverName" to newName)
                         if (newImageUrl != null) collabUpdates["receiverImage"] = newImageUrl
@@ -280,7 +252,6 @@ class ProfileInformation : AppCompatActivity() {
                 batch.commit()
             }
 
-        // Wait for all batches to finish
         com.google.android.gms.tasks.Tasks.whenAllComplete(taskUpdate, collabSenderUpdate, collabReceiverUpdate)
             .addOnCompleteListener {
                 onComplete()

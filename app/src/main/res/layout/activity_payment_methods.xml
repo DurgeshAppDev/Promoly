@@ -2,10 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainPaymentMethods"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8FAFB"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context=".activity.PaymentMethodsActivity">
 
     <!-- Header -->
@@ -144,16 +146,6 @@
                         android:layout_centerVertical="true"
                         android:src="@drawable/three_dots"
                         app:tint="@color/grey" />
-
-                    <ImageView
-                        android:layout_width="@dimen/_18sdp"
-                        android:layout_height="@dimen/_18sdp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="@dimen/_8sdp"
-                        android:layout_toStartOf="@id/ivOptions"
-                        android:src="@drawable/ic_tasks"
-                        app:tint="@color/green" />
-
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -230,7 +222,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="#F2F4F7" />
-
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"

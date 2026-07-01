@@ -1,7 +1,6 @@
 package com.durgesh.promoly.fragments
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +24,6 @@ class TasksFragment : Fragment() {
     private lateinit var rvTasks: RecyclerView
     private lateinit var adapter: AdapterTasksPriority
     private val taskList = mutableListOf<ModelTaskPriority>()
-
     private lateinit var btnAllTasks: MaterialButton
     private lateinit var btnMyTasks: MaterialButton
     private lateinit var etSearchTasks: EditText
@@ -35,12 +33,8 @@ class TasksFragment : Fragment() {
     private var showingOnlyMyTasks = false
     private var taskListener: com.google.firebase.firestore.ListenerRegistration? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_tasks, container, false)
-
         rvTasks = view.findViewById(R.id.rvTaskPriorities)
         btnAllTasks = view.findViewById(R.id.btnAllTasks)
         btnMyTasks = view.findViewById(R.id.btnMyTasks)
@@ -50,9 +44,7 @@ class TasksFragment : Fragment() {
         llEmptyTasks = view.findViewById(R.id.llEmptyTasks)
 
         rvTasks.layoutManager = LinearLayoutManager(requireContext())
-        adapter = AdapterTasksPriority(taskList, FirebaseAuth.getInstance().currentUser?.uid ?: "") { task ->
-            sendCollabRequest(task)
-        }
+        adapter = AdapterTasksPriority(taskList, FirebaseAuth.getInstance().currentUser?.uid ?: "") { sendCollabRequest(it) }
         rvTasks.adapter = adapter
 
         btnAllTasks.setOnClickListener {
@@ -62,7 +54,6 @@ class TasksFragment : Fragment() {
                 loadTasksFromFirestore()
             }
         }
-
         btnMyTasks.setOnClickListener {
             if (!showingOnlyMyTasks) {
                 showingOnlyMyTasks = true
@@ -70,20 +61,10 @@ class TasksFragment : Fragment() {
                 loadTasksFromFirestore()
             }
         }
-
         btnSearchTasks.setOnClickListener {
             val queryText = etSearchTasks.text.toString().trim()
-            if (queryText.length >= 2) {
-                searchTasks(queryText)
-            } else {
-                if (queryText.isEmpty()) {
-                    loadTasksFromFirestore()
-                } else {
-                    showToast("Please enter at least 2 characters to search")
-                }
-            }
+            if (queryText.length >= 2) searchTasks(queryText) else if (queryText.isEmpty()) loadTasksFromFirestore() else showToast("Min 2 chars")
         }
-
         return view
     }
 
@@ -92,35 +73,29 @@ class TasksFragment : Fragment() {
         pbTasks.visibility = View.VISIBLE
         llEmptyTasks.visibility = View.GONE
         rvTasks.visibility = View.GONE
-
-        // Search is always GLOBAL across all tasks as requested
-        val query: Query = db.collection(Constants.COLLECTION_TASKS)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
-
-        // Reset filter UI to "All Tasks" when searching globally
         showingOnlyMyTasks = false
         updateFilterUI()
 
-        query.get().addOnSuccessListener { documents ->
+        // Simplified query to avoid index requirements
+        db.collection(Constants.COLLECTION_TASKS)
+            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { documents ->
             pbTasks.visibility = View.GONE
             taskList.clear()
             val lowerSearch = searchText.lowercase()
             for (doc in documents) {
+                val status = doc.getString("status") ?: "Active"
+                if (status != "Active") continue
+
                 val title = doc.getString("projectTitle") ?: ""
                 val category = doc.getString("category") ?: ""
                 val priority = doc.getString("priority") ?: "Medium Priority"
-
-                // Local filtering for partial matches across multiple fields
-                if (title.lowercase().contains(lowerSearch) || 
-                    category.lowercase().contains(lowerSearch) || 
-                    priority.lowercase().contains(lowerSearch)) {
-                    
-                    val task = mapDocumentToModel(doc)
-                    taskList.add(task)
+                if (title.lowercase().contains(lowerSearch) || category.lowercase().contains(lowerSearch) || priority.lowercase().contains(lowerSearch)) {
+                    taskList.add(mapDocumentToModel(doc))
                 }
             }
             adapter.notifyDataSetChanged()
-            
             if (taskList.isEmpty()) {
                 llEmptyTasks.visibility = View.VISIBLE
                 rvTasks.visibility = View.GONE
@@ -128,33 +103,11 @@ class TasksFragment : Fragment() {
                 llEmptyTasks.visibility = View.GONE
                 rvTasks.visibility = View.VISIBLE
             }
-
-            if (taskList.isEmpty() && isAdded) {
-                showToast("No tasks found matching '$searchText'")
-            }
-        }.addOnFailureListener {
-            pbTasks.visibility = View.GONE
-            llEmptyTasks.visibility = View.VISIBLE
-            rvTasks.visibility = View.GONE
         }
     }
 
     private fun mapDocumentToModel(doc: com.google.firebase.firestore.DocumentSnapshot): ModelTaskPriority {
-        return ModelTaskPriority(
-            id = doc.getString("id") ?: doc.id,
-            userId = doc.getString("userId") ?: "",
-            userName = doc.getString("userName") ?: "Name",
-            userProfileImage = doc.getString("userProfileImage") ?: "",
-            priority = doc.getString("priority") ?: "Medium Priority",
-            category = doc.getString("category") ?: "",
-            title = doc.getString("projectTitle") ?: "",
-            description = doc.getString("description") ?: "",
-            timeline = doc.getString("timeline") ?: "",
-            budget = doc.getString("budget") ?: "",
-            progress = doc.getLong("progress")?.toInt() ?: 0,
-            status = doc.getString("status") ?: "Active",
-            skills = doc.get("skills") as? List<String> ?: emptyList()
-        )
+        return ModelTaskPriority(id = doc.getString("id") ?: doc.id, userId = doc.getString("userId") ?: "", userName = doc.getString("userName") ?: "Name", userProfileImage = doc.getString("userProfileImage") ?: "", priority = doc.getString("priority") ?: "Medium Priority", category = doc.getString("category") ?: "", title = doc.getString("projectTitle") ?: "", description = doc.getString("description") ?: "", timeline = doc.getString("timeline") ?: "", budget = doc.getString("budget") ?: "", progress = doc.getLong("progress")?.toInt() ?: 0, status = doc.getString("status") ?: "Active", skills = doc.get("skills") as? List<String> ?: emptyList())
     }
 
     private fun updateFilterUI() {
@@ -166,139 +119,77 @@ class TasksFragment : Fragment() {
         if (showingOnlyMyTasks) {
             btnMyTasks.backgroundTintList = android.content.res.ColorStateList.valueOf(activeColor)
             btnMyTasks.setTextColor(activeTextColor)
-            btnMyTasks.elevation = resources.getDimension(com.intuit.sdp.R.dimen._2sdp)
-            
             btnAllTasks.backgroundTintList = android.content.res.ColorStateList.valueOf(inactiveColor)
             btnAllTasks.setTextColor(inactiveTextColor)
-            btnAllTasks.elevation = 0f
         } else {
             btnAllTasks.backgroundTintList = android.content.res.ColorStateList.valueOf(activeColor)
             btnAllTasks.setTextColor(activeTextColor)
-            btnAllTasks.elevation = resources.getDimension(com.intuit.sdp.R.dimen._2sdp)
-            
             btnMyTasks.backgroundTintList = android.content.res.ColorStateList.valueOf(inactiveColor)
             btnMyTasks.setTextColor(inactiveTextColor)
-            btnMyTasks.elevation = 0f
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadTasksFromFirestore()
     }
 
     private fun sendCollabRequest(task: ModelTaskPriority) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseFirestore.getInstance()
 
-        // 1. Check if a request already exists to avoid spamming
-        db.collection(Constants.COLLECTION_COLLABS)
-            .whereEqualTo("taskId", task.id)
-            .whereEqualTo("senderId", currentUserId)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (!documents.isEmpty) {
-                    showToast("Request already sent for this task!")
-                    return@addOnSuccessListener
-                }
-
-                // 2. Fetch sender's info (current user) to denormalize into the request
-                db.collection(Constants.COLLECTION_USERS).document(currentUserId).get()
-                    .addOnSuccessListener { senderDoc ->
-                        val senderName = senderDoc.getString("name") ?: "Name"
-                        val senderImage = senderDoc.getString("profileImageUrl") ?: ""
-
-                        val requestMap = hashMapOf(
-                            "taskId" to task.id,
-                            "taskTitle" to task.title,
-                            "senderId" to currentUserId,
-                            "senderName" to senderName,
-                            "senderImage" to senderImage,
-                            "receiverId" to task.userId, // The one who posted the task
-                            "status" to "Pending",
-                            "timestamp" to com.google.firebase.firestore.FieldValue.serverTimestamp()
-                        )
-
-                        db.collection(Constants.COLLECTION_COLLABS)
-                            .add(requestMap)
-                            .addOnSuccessListener {
-                                if (isAdded) {
-                                    showToast("Collaboration request sent!")
-                                    // Trigger notification to task owner
-                                    context?.let { ctx ->
-                                        FcmNotificationSender.sendNotification(
-                                            context = ctx,
-                                            receiverId = task.userId,
-                                            title = "New Collaboration Request",
-                                            message = "$senderName wants to collaborate on \"${task.title}\"",
-                                            type = "collab_request"
-                                        )
-                                    }
-                                }
-                            }
-                            .addOnFailureListener { e ->
-                                Log.e("TasksFragment", "Error sending request", e)
-                                showToast("Failed to send request")
-                            }
-                    }
+        db.collection(Constants.COLLECTION_COLLABS).whereEqualTo("taskId", task.id).whereEqualTo("senderId", currentUserId).get().addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                showToast("Already sent")
+                return@addOnSuccessListener
             }
+            db.collection(Constants.COLLECTION_USERS).document(currentUserId).get().addOnSuccessListener { senderDoc ->
+                val senderName = senderDoc.getString("name") ?: "Name"
+                val requestMap = hashMapOf("taskId" to task.id, "taskTitle" to task.title, "senderId" to currentUserId, "senderName" to senderName, "senderImage" to (senderDoc.getString("profileImageUrl") ?: ""), "receiverId" to task.userId, "status" to "Pending", "timestamp" to com.google.firebase.firestore.FieldValue.serverTimestamp())
+                db.collection(Constants.COLLECTION_COLLABS).add(requestMap).addOnSuccessListener {
+                    if (isAdded) {
+                        showToast("Request sent!")
+                        context?.let { ctx -> FcmNotificationSender.sendNotification(ctx, task.userId, "New Request", "$senderName wants to collaborate", "collab_request") }
+                    }
+                }
+            }
+        }
     }
 
     private fun loadTasksFromFirestore() {
         val db = FirebaseFirestore.getInstance()
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-
         pbTasks.visibility = View.VISIBLE
         llEmptyTasks.visibility = View.GONE
         rvTasks.visibility = View.GONE
-
-        // Remove old listener if it exists
         taskListener?.remove()
-
-        // Use addSnapshotListener for "live" updates
+        
+        // Simplified query to avoid blank screens/hangs from missing indexes
         taskListener = db.collection(Constants.COLLECTION_TASKS)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
-                pbTasks.visibility = View.GONE
-                if (e != null) {
-                    Log.e("TasksFragment", "Listen failed.", e)
-                    if (isAdded) showToast("Failed to load live updates")
-                    llEmptyTasks.visibility = View.VISIBLE
-                    return@addSnapshotListener
-                }
-
-                if (snapshots != null) {
-                    taskList.clear()
-                    for (doc in snapshots) {
-                        try {
-                            val taskUserId = doc.getString("userId") ?: ""
-                            
-                            // Apply filter in memory if "My Tasks" is selected
-                            if (showingOnlyMyTasks && taskUserId != currentUserId) {
-                                continue
-                            }
-
-                            val task = mapDocumentToModel(doc)
-                            taskList.add(task)
-                        } catch (e: Exception) {
-                            Log.e("TasksFragment", "Error parsing task: ${e.message}")
-                        }
-                    }
-                    adapter.notifyDataSetChanged()
-                    
-                    if (taskList.isEmpty()) {
-                        llEmptyTasks.visibility = View.VISIBLE
-                        rvTasks.visibility = View.GONE
-                    } else {
-                        llEmptyTasks.visibility = View.GONE
-                        rvTasks.visibility = View.VISIBLE
-                    }
-
-                    if (taskList.isEmpty() && isAdded) {
-                        Log.d("TasksFragment", if (showingOnlyMyTasks) "No personal tasks found" else "No global tasks found")
-                    }
+            pbTasks.visibility = View.GONE
+            if (e != null || snapshots == null) {
+                llEmptyTasks.visibility = View.VISIBLE
+                return@addSnapshotListener
+            }
+            taskList.clear()
+            for (doc in snapshots) {
+                val status = doc.getString("status") ?: "Active"
+                if (status == "Active") {
+                    if (showingOnlyMyTasks && doc.getString("userId") != currentUserId) continue
+                    taskList.add(mapDocumentToModel(doc))
                 }
             }
+            adapter.notifyDataSetChanged()
+            if (taskList.isEmpty()) {
+                llEmptyTasks.visibility = View.VISIBLE
+                rvTasks.visibility = View.GONE
+            } else {
+                llEmptyTasks.visibility = View.GONE
+                rvTasks.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadTasksFromFirestore()
     }
 
     override fun onDestroyView() {

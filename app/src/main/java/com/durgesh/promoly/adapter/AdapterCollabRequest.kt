@@ -77,36 +77,56 @@ class AdapterCollabRequest(
         holder.tvAccept.isEnabled = false
         holder.tvDecline.isEnabled = false
 
-        // If accepted, we also want to attach receiver info for the Collabs screen
         if (newStatus == "Accepted") {
-            db.collection(Constants.COLLECTION_USERS).document(currentUserId).get()
-                .addOnSuccessListener { userDoc ->
-                    val receiverName = userDoc.getString("name") ?: "Name"
-                    val receiverImage = userDoc.getString("profileImageUrl") ?: ""
+            // 1. Check if task is still available
+            db.collection(Constants.COLLECTION_TASKS).document(item.taskId).get()
+                .addOnSuccessListener { taskDoc ->
+                    val taskStatus = taskDoc.getString("status") ?: "Active"
+                    if (taskStatus != "Active") {
+                        holder.itemView.context.showToast("This task is no longer available.")
+                        holder.tvAccept.isEnabled = true
+                        holder.tvDecline.isEnabled = true
+                        return@addOnSuccessListener
+                    }
 
-                    val updates = hashMapOf(
-                        "status" to newStatus,
-                        "receiverName" to receiverName,
-                        "receiverImage" to receiverImage,
-                        "acceptedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
-                    )
+                    // 2. Fetch acceptor (current user) info
+                    db.collection(Constants.COLLECTION_USERS).document(currentUserId).get()
+                        .addOnSuccessListener { userDoc ->
+                            val receiverName = userDoc.getString("name") ?: "Name"
+                            val receiverImage = userDoc.getString("profileImageUrl") ?: ""
 
-                    db.collection(Constants.COLLECTION_COLLABS).document(requestId)
-                        .update(updates as Map<String, Any>)
-                        .addOnSuccessListener {
-                            val context = holder.itemView.context
-                            context.showToast("Collaboration $newStatus!")
-                            
-                            // Send notification to the requester (senderId)
-                            FcmNotificationSender.sendNotification(
-                                context = context,
-                                receiverId = item.senderId,
-                                title = "Collaboration Accepted!",
-                                message = "$receiverName has accepted your collaboration request for \"${item.coDescription}\"",
-                                type = "collab_accept"
+                            val updates = hashMapOf(
+                                "status" to "Accepted",
+                                "receiverName" to receiverName,
+                                "receiverImage" to receiverImage,
+                                "acceptedAt" to com.google.firebase.firestore.FieldValue.serverTimestamp()
                             )
 
-                            onActionComplete()
+                            // 3. Accept this specific request
+                            db.collection(Constants.COLLECTION_COLLABS).document(requestId)
+                                .update(updates as Map<String, Any>)
+                                .addOnSuccessListener {
+                                    // 4. Mark Task as Accepted (Removes it from "All Tasks" for everyone)
+                                    db.collection(Constants.COLLECTION_TASKS).document(item.taskId)
+                                        .update("status", "Accepted")
+
+                                    val context = holder.itemView.context
+                                    context.showToast("Collaboration Accepted!")
+
+                                    // 5. Notify the lucky requester
+                                    FcmNotificationSender.sendNotification(
+                                        context = context,
+                                        receiverId = item.senderId,
+                                        title = "Collaboration Accepted!",
+                                        message = "$receiverName has accepted your request for \"${item.coDescription}\"",
+                                        type = "collab_accept"
+                                    )
+
+                                    // 6. HANDLE OTHERS: Notify all other pending requesters for this task
+                                    notifyOtherRequesters(context, item.taskId, requestId, receiverName)
+
+                                    onActionComplete()
+                                }
                         }
                 }
         } else {
@@ -117,6 +137,37 @@ class AdapterCollabRequest(
                     onActionComplete()
                 }
         }
+    }
+
+    private fun notifyOtherRequesters(context: android.content.Context, taskId: String, acceptedRequestId: String, acceptorName: String) {
+        val db = FirebaseFirestore.getInstance()
+        
+        // Find all other pending requests for this task
+        db.collection(Constants.COLLECTION_COLLABS)
+            .whereEqualTo("taskId", taskId)
+            .whereEqualTo("status", "Pending")
+            .get()
+            .addOnSuccessListener { documents ->
+                for (doc in documents) {
+                    if (doc.id == acceptedRequestId) continue // Skip the one we just accepted
+
+                    val otherSenderId = doc.getString("senderId") ?: continue
+                    val taskTitle = doc.getString("taskTitle") ?: "Project"
+
+                    // Notify them
+                    FcmNotificationSender.sendNotification(
+                        context = context,
+                        receiverId = otherSenderId,
+                        title = "Task Update",
+                        message = "$acceptorName has accepted another user for \"$taskTitle\"",
+                        type = "collab_denied_others"
+                    )
+
+                    // Optionally update their status to "Closed" or "Declined"
+                    db.collection(Constants.COLLECTION_COLLABS).document(doc.id)
+                        .update("status", "Closed")
+                }
+            }
     }
 
     override fun getItemCount(): Int {
