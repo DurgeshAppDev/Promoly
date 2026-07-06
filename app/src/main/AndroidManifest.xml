@@ -86,10 +86,13 @@
             android:name=".activity.ChatRoomActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
-
         <activity
             android:name="com.canhub.cropper.CropImageActivity"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity
+            android:name=".activity.All_Followers_Activity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
