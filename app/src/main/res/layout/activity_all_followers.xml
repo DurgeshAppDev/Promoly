@@ -5,7 +5,7 @@
     android:id="@+id/mainNotifSettings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFB"
+    android:background="@drawable/backgroundcolor"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
     tools:context=".activity.All_Followers_Activity">
@@ -43,5 +43,6 @@
         android:id="@+id/rvAllFollowers"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/_10sdp"/>
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        />
 </LinearLayout>

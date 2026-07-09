@@ -171,52 +171,53 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- All Collabs Card -->
+
+                <!-- Growth Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="@dimen/_125sdp"
                     android:layout_height="@dimen/_120sdp"
                     android:layout_margin="@dimen/_4sdp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:stateListAnimator="@animator/button_click_animator"
                     app:cardCornerRadius="@dimen/_15sdp"
                     app:cardElevation="@dimen/_5sdp"
                     app:cardUseCompatPadding="true"
-                    app:strokeWidth="0dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:stateListAnimator="@animator/button_click_animator">
+                    app:strokeWidth="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"
                         android:gravity="center"
+                        android:orientation="vertical"
                         android:padding="@dimen/_10sdp">
 
                         <ImageView
                             android:layout_width="@dimen/_28sdp"
                             android:layout_height="@dimen/_28sdp"
-                            android:src="@drawable/ic_collab"
-                            android:layout_marginBottom="@dimen/_8sdp" />
+                            android:layout_marginBottom="@dimen/_8sdp"
+                            android:src="@drawable/ic_collab" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins"
                             android:text="Collabs"
-                            android:textSize="@dimen/_12ssp"
                             android:textColor="@color/grey"
-                            android:textStyle="bold"
-                            android:fontFamily="@font/poppins" />
+                            android:textSize="@dimen/_12ssp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvActiveCollabsCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:textSize="@dimen/_18ssp"
                             android:textColor="@color/blackR"
+                            android:textSize="@dimen/_18ssp"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Growth Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="@dimen/_125sdp"
                     android:layout_height="@dimen/_120sdp"
