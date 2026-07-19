@@ -82,6 +82,17 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvProfileProfession"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:text="Digital Creator"
+                android:textColor="@color/green"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins" />
+
+            <TextView
                 android:id="@+id/tvProfileBio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

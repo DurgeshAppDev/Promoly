@@ -37,6 +37,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var ivProfileLarge: ImageView
     private lateinit var tvProfileName: TextView
+    private lateinit var tvProfileProfessionBadge: TextView
     private lateinit var tvProfileBio: TextView
     private lateinit var tvProfileCollabsCount: TextView
     private lateinit var tvProfileTasksCount: TextView
@@ -54,6 +55,7 @@ class ProfileFragment : Fragment() {
 
         ivProfileLarge = view.findViewById(R.id.ivProfileLarge)
         tvProfileName = view.findViewById(R.id.tvProfileName)
+        tvProfileProfessionBadge = view.findViewById(R.id.tvProfileProfessionBadge)
         tvProfileBio = view.findViewById(R.id.tvProfileBio)
         tvProfileCollabsCount = view.findViewById(R.id.tvProfileCollabsCount)
         tvProfileTasksCount = view.findViewById(R.id.tvProfileTasksCount)
@@ -89,6 +91,8 @@ class ProfileFragment : Fragment() {
 
     private fun loadCachedData() {
         tvProfileName.text = preferenceManager.getUserName()
+        val profession = preferenceManager.getUserProfession()
+        tvProfileProfessionBadge.text = profession.ifEmpty { "Creator" }
         val bio = preferenceManager.getUserBio()
         tvProfileBio.text = bio.ifEmpty { "Digital Creator & Brand Strategist." }
         val followers = preferenceManager.getUserFollowers()
@@ -108,15 +112,17 @@ class ProfileFragment : Fragment() {
             .addOnSuccessListener { document ->
                 if (isAdded && document != null && document.exists()) {
                     val name = document.getString("name") ?: "Name"
+                    val profession = document.getString("profession") ?: ""
                     val bio = document.getString("bio") ?: ""
                     val imageUrl = document.getString("profileImageUrl")
                     val followers = document.getLong("followers") ?: 0L
 
                     tvProfileName.text = name
+                    tvProfileProfessionBadge.text = profession.ifEmpty { "Creator" }
                     tvProfileBio.text = if (bio.isEmpty()) "Digital Creator & Brand Strategist." else bio
                     tvProfileFollowersCount.text = if (followers >= 1000) "${followers/1000}k" else followers.toString()
 
-                    preferenceManager.saveUserProfile(name, bio, imageUrl, followers)
+                    preferenceManager.saveUserProfile(name, profession, bio, imageUrl, followers)
                     imageUrl?.let { displayImage(it) }
                 }
             }

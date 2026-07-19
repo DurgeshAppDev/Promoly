@@ -9,6 +9,7 @@ class PreferenceManager(context: Context) {
 
     companion object {
         private const val KEY_USER_NAME = "userName"
+        private const val KEY_USER_PROFESSION = "userProfession"
         private const val KEY_USER_BIO = "userBio"
         private const val KEY_USER_IMAGE = "userImage"
         private const val KEY_USER_FOLLOWERS = "userFollowers"
@@ -34,9 +35,10 @@ class PreferenceManager(context: Context) {
         return sharedPreferences.getBoolean(key, defaultValue)
     }
 
-    fun saveUserProfile(name: String, bio: String, imageUrl: String?, followers: Long) {
+    fun saveUserProfile(name: String, profession: String, bio: String, imageUrl: String?, followers: Long) {
         sharedPreferences.edit().apply {
             putString(KEY_USER_NAME, name)
+            putString(KEY_USER_PROFESSION, profession)
             putString(KEY_USER_BIO, bio)
             putString(KEY_USER_IMAGE, imageUrl)
             putLong(KEY_USER_FOLLOWERS, followers)
@@ -53,6 +55,7 @@ class PreferenceManager(context: Context) {
     }
 
     fun getUserName(): String = sharedPreferences.getString(KEY_USER_NAME, "Name") ?: "Name"
+    fun getUserProfession(): String = sharedPreferences.getString(KEY_USER_PROFESSION, "") ?: ""
     fun getUserBio(): String = sharedPreferences.getString(KEY_USER_BIO, "") ?: ""
     fun getUserImage(): String? = sharedPreferences.getString(KEY_USER_IMAGE, null)
     fun getUserFollowers(): Long = sharedPreferences.getLong(KEY_USER_FOLLOWERS, 0L)

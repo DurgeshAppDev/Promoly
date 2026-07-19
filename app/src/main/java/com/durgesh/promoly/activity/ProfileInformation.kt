@@ -6,6 +6,8 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
+import android.widget.Spinner
+import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -38,6 +40,7 @@ class ProfileInformation : AppCompatActivity() {
     private lateinit var etEmail: EditText
     private lateinit var etBio: EditText
     private lateinit var etPhone: EditText
+    private lateinit var spinnerProfession: Spinner
     private lateinit var btnSaveChanges: MaterialButton
     private lateinit var btnCancel: TextView
     private lateinit var btnBackInfo: ImageView
@@ -107,11 +110,13 @@ class ProfileInformation : AppCompatActivity() {
         etEmail = findViewById(R.id.etEmail)
         etBio = findViewById(R.id.etBio)
         etPhone = findViewById(R.id.etPhone)
+        spinnerProfession = findViewById(R.id.spinnerProfession)
         btnSaveChanges = findViewById(R.id.btnSaveChanges)
         btnCancel = findViewById(R.id.btnCancel)
         ivEditProfileImage = findViewById(R.id.ivEditProfileImage)
         btnChangeImage = findViewById(R.id.btnChangeImage)
 
+        setupProfessionDropdown()
         loadUserProfileData()
 
         btnBackInfo.setOnClickListener { finish() }
@@ -136,6 +141,27 @@ class ProfileInformation : AppCompatActivity() {
         }
     }
 
+    private fun setupProfessionDropdown() {
+        val professions = arrayOf(
+            "Select your role",
+            "Android Developer",
+            "Web Developer",
+            "UI/UX Designer",
+            "Digital Creator",
+            "Content Writer",
+            "Brand Strategist",
+            "Marketing Expert",
+            "Photographer",
+            "Video Editor",
+            "Entrepreneur",
+            "Social Media Manager",
+            "Graphic Designer"
+        )
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, professions)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerProfession.adapter = adapter
+    }
+
     private fun loadUserProfileData() {
         val currentUserId = auth.currentUser?.uid ?: return
 
@@ -148,6 +174,14 @@ class ProfileInformation : AppCompatActivity() {
                     etEmail.setText(document.getString("email"))
                     etBio.setText(document.getString("bio") ?: "")
                     etPhone.setText(document.getString("phone") ?: "")
+                    val profession = document.getString("profession") ?: ""
+                    val professions = (spinnerProfession.adapter as ArrayAdapter<String>)
+                    for (i in 0 until professions.count) {
+                        if (professions.getItem(i) == profession) {
+                            spinnerProfession.setSelection(i)
+                            break
+                        }
+                    }
 
                     uploadedImageUrl = document.getString("profileImageUrl")
                     if (!uploadedImageUrl.isNullOrEmpty()) {
@@ -174,12 +208,18 @@ class ProfileInformation : AppCompatActivity() {
         val email = etEmail.text.toString().trim()
         val bio = etBio.text.toString().trim()
         val phone = etPhone.text.toString().trim()
+        val profession = if (spinnerProfession.selectedItemPosition > 0) {
+            spinnerProfession.selectedItem.toString()
+        } else {
+            ""
+        }
 
         val updatesMap = HashMap<String, Any>()
         updatesMap["name"] = name
         updatesMap["email"] = email
         updatesMap["bio"] = bio
         updatesMap["phone"] = phone
+        updatesMap["profession"] = profession
         updatesMap["updatedAt"] = FieldValue.serverTimestamp()
 
         val finalImageUrl = base64ImageString ?: uploadedImageUrl
@@ -195,7 +235,7 @@ class ProfileInformation : AppCompatActivity() {
             .update(updatesMap)
             .addOnSuccessListener {
                 val currentFollowers = preferenceManager.getUserFollowers()
-                preferenceManager.saveUserProfile(name, bio, finalImageUrl, currentFollowers)
+                preferenceManager.saveUserProfile(name, profession, bio, finalImageUrl, currentFollowers)
 
                 updateDenormalizedUserData(currentUserId, name, finalImageUrl) {
                     showToast("Profile Updated!")

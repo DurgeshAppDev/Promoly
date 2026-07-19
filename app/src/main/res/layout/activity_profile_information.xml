@@ -101,7 +101,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="Change Photo"
+                android:text="Change Image"
                 android:textColor="@color/green"
                 android:textSize="@dimen/_11ssp"
                 android:textStyle="bold" />
@@ -249,6 +249,37 @@
                     android:textSize="@dimen/_11ssp"
                     android:singleLine="true"
                     android:inputType="phone" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Profession/Role Dropdown -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="What are you? (Role)"
+                android:textColor="@color/blackR"
+                android:textSize="@dimen/_11ssp"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins"
+                android:layout_marginStart="@dimen/_5sdp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:cardCornerRadius="@dimen/_10sdp"
+                app:cardElevation="@dimen/_3sdp"
+                app:cardUseCompatPadding="true"
+                app:strokeColor="#E4E7EC"
+                app:strokeWidth="1dp">
+
+                <Spinner
+                    android:id="@+id/spinnerProfession"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:padding="@dimen/_12sdp"
+                    android:spinnerMode="dropdown" />
             </com.google.android.material.card.MaterialCardView>
 
             <!-- Save Button -->

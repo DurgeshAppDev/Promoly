@@ -48,7 +48,7 @@
             android:orientation="vertical"
             android:layout_marginTop="@dimen/_10sdp">
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -63,23 +63,30 @@
                     app:strokeWidth="@dimen/_2sdp"
                     app:strokeColor="@color/white"
                     app:shapeAppearanceOverlay="@style/CircleImageView"
-                    android:elevation="@dimen/_4sdp" />
+                    android:elevation="@dimen/_4sdp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
                 <TextView
+                    android:id="@+id/tvProfileProfessionBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/ivProfileLarge"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="-10dp"
                     android:background="@drawable/buttonlayout"
                     android:paddingHorizontal="@dimen/_15sdp"
                     android:paddingVertical="@dimen/_4sdp"
-                    android:text="Creator"
+                    android:text="Role"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_10ssp"
                     android:textStyle="bold"
-                    android:elevation="@dimen/_6sdp" />
-            </RelativeLayout>
+                    android:elevation="@dimen/_6sdp"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    app:layout_constraintBottom_toBottomOf="@id/ivProfileLarge"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginBottom="-10dp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
                 android:id="@+id/tvProfileName"
@@ -89,17 +96,22 @@
                 android:text="Name"
                 android:textColor="@color/blackR"
                 android:textSize="@dimen/_20ssp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:gravity="center" />
 
             <TextView
                 android:id="@+id/tvProfileBio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_2sdp"
+                android:paddingHorizontal="@dimen/_20sdp"
                 android:text="Digital Creator &amp; Brand Strategist."
                 android:textColor="@color/grey"
                 android:textSize="@dimen/_11ssp"
-                android:fontFamily="@font/poppins" />
+                android:fontFamily="@font/poppins"
+                android:textAlignment="center"
+                android:gravity="center" />
         </LinearLayout>
 
         <!-- Stats Section -->

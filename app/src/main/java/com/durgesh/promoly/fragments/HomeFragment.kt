@@ -139,11 +139,12 @@ class HomeFragment : Fragment() {
             .addOnSuccessListener { document ->
                 if (isAdded && document != null && document.exists()) {
                     val name = document.getString("name") ?: "Name"
+                    val profession = document.getString("profession") ?: ""
                     val imageUrl = document.getString("profileImageUrl")
                     val bio = document.getString("bio") ?: ""
                     val followers = document.getLong("followers") ?: 0L
                     tvGreeting.text = "Hello $name"
-                    preferenceManager.saveUserProfile(name, bio, imageUrl, followers)
+                    preferenceManager.saveUserProfile(name, profession, bio, imageUrl, followers)
                     imageUrl?.let { displayProfileImage(it) }
                 }
             }

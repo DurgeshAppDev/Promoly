@@ -31,6 +31,7 @@ import com.google.firebase.firestore.Query
 class ViewProfile : AppCompatActivity() {
     private lateinit var ivProfileImage: ImageView
     private lateinit var tvProfileName: TextView
+    private lateinit var tvProfileProfession: TextView
     private lateinit var tvProfileBio: TextView
     private lateinit var tvProfileCollabsCount: TextView
     private lateinit var tvProfileFollowersCount: TextView
@@ -69,6 +70,7 @@ class ViewProfile : AppCompatActivity() {
     private fun initViews() {
         ivProfileImage = findViewById(R.id.ivProfileImage)
         tvProfileName = findViewById(R.id.tvProfileName)
+        tvProfileProfession = findViewById(R.id.tvProfileProfession)
         tvProfileBio = findViewById(R.id.tvProfileBio)
         tvProfileCollabsCount = findViewById(R.id.tvProfileCollabsCount)
         tvProfileFollowersCount = findViewById(R.id.tvProfileFollowersCount)
@@ -165,11 +167,13 @@ class ViewProfile : AppCompatActivity() {
             .addSnapshotListener { doc, _ ->
                 if (doc != null && doc.exists()) {
                     val name = doc.getString("name") ?: "Name"
+                    val profession = doc.getString("profession") ?: ""
                     val bio = doc.getString("bio") ?: ""
                     val imageUrl = doc.getString("profileImageUrl")
                     val followers = (doc.getLong("followers") ?: 0L).coerceAtLeast(0)
                     tvProfileName.text = name
-                    tvProfileBio.text = bio.ifEmpty { "Digital Creator & Brand Strategist." }
+                    tvProfileProfession.text = profession.ifEmpty { "Digital Creator" }
+                    tvProfileBio.text = bio.ifEmpty { "No bio available." }
                     tvProfileFollowersCount.text = if (followers >= 1000) "${followers/1000}k" else followers.toString()
                     imageUrl?.let { displayImage(it) }
                 }
