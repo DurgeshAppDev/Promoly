@@ -7,6 +7,7 @@ import android.util.Base64
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +34,7 @@ class ViewProfile : AppCompatActivity() {
     private lateinit var tvProfileBio: TextView
     private lateinit var tvProfileCollabsCount: TextView
     private lateinit var tvProfileFollowersCount: TextView
+    private lateinit var llFollowers: LinearLayout
     private lateinit var tvProfileTasksCount: TextView
     private lateinit var rvCollabs: RecyclerView
     private lateinit var rvTasks: RecyclerView
@@ -70,6 +72,7 @@ class ViewProfile : AppCompatActivity() {
         tvProfileBio = findViewById(R.id.tvProfileBio)
         tvProfileCollabsCount = findViewById(R.id.tvProfileCollabsCount)
         tvProfileFollowersCount = findViewById(R.id.tvProfileFollowersCount)
+        llFollowers = findViewById(R.id.llFollowers)
         tvProfileTasksCount = findViewById(R.id.tvProfileTasksCount)
         rvCollabs = findViewById(R.id.rvCollabRequests)
         rvTasks = findViewById(R.id.rvTaskPrioritiesProfile)
@@ -78,6 +81,12 @@ class ViewProfile : AppCompatActivity() {
         val btnMessage = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnMessage)
 
         findViewById<ImageButton>(R.id.btnBack).setOnClickListener { onBackPressed() }
+
+        llFollowers.setOnClickListener {
+            val intent = Intent(this, All_Followers_Activity::class.java)
+            intent.putExtra("userId", profileUserId)
+            startActivity(intent)
+        }
 
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
         if (profileUserId == currentUserId) {
@@ -128,7 +137,15 @@ class ViewProfile : AppCompatActivity() {
             }
         } else {
             followerRef.delete().addOnSuccessListener {
-                db.collection(Constants.COLLECTION_USERS).document(profileUserId!!).update("followers", FieldValue.increment(-1))
+                val userRef = db.collection(Constants.COLLECTION_USERS).document(profileUserId!!)
+                db.runTransaction { transaction ->
+                    val snapshot = transaction.get(userRef)
+                    val currentFollowers = snapshot.getLong("followers") ?: 0L
+                    if (currentFollowers > 0) {
+                        transaction.update(userRef, "followers", currentFollowers - 1)
+                    }
+                    null
+                }
             }
         }
     }
@@ -150,7 +167,7 @@ class ViewProfile : AppCompatActivity() {
                     val name = doc.getString("name") ?: "Name"
                     val bio = doc.getString("bio") ?: ""
                     val imageUrl = doc.getString("profileImageUrl")
-                    val followers = doc.getLong("followers") ?: 0L
+                    val followers = (doc.getLong("followers") ?: 0L).coerceAtLeast(0)
                     tvProfileName.text = name
                     tvProfileBio.text = bio.ifEmpty { "Digital Creator & Brand Strategist." }
                     tvProfileFollowersCount.text = if (followers >= 1000) "${followers/1000}k" else followers.toString()

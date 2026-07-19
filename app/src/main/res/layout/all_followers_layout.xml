@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="@dimen/_12sdp"
-    android:layout_marginVertical="@dimen/_6sdp"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="@dimen/_15sdp"
     app:cardElevation="@dimen/_5sdp"
@@ -15,14 +14,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/_12sdp">
+        android:padding="@dimen/_15sdp">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivProfileImageFollower"
             android:layout_width="@dimen/_45sdp"
             android:layout_height="@dimen/_45sdp"
             android:scaleType="centerInside"
-            android:padding="@dimen/_8sdp"
+            android:padding="@dimen/_5sdp"
             android:background="#F2F4F7"
             android:src="@drawable/user"
             app:shapeAppearanceOverlay="@style/CircleImageView"
@@ -38,12 +37,10 @@
             android:textColor="#101828"
             android:textSize="@dimen/_13ssp"
             android:textStyle="bold"
-            app:layout_constraintBaseline_creator="@+id/ivProfileImageFollower"
+            app:layout_constraintBottom_toBottomOf="@+id/ivProfileImageFollower"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/ivProfileImageFollower"
-            tools:layout_editor_absoluteY="15dp"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintTop_toTopOf="@+id/ivProfileImageFollower" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
